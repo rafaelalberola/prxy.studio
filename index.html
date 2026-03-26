@@ -69,7 +69,7 @@ nav{
   min-height:100vh;
   display:flex;
   align-items:center;
-  padding:120px 40px 40px;
+  padding:120px 40px 120px;
   text-align:center;
 }
 
@@ -77,7 +77,33 @@ nav{
 .m:empty{display:none}
 .m.v{animation:fadeIn .5s ease forwards}
 .sp{height:24px}
-.dots{text-align:center;letter-spacing:.5em;font-size:14px}
+/* JP glyphs */
+.dots{
+  text-align:center;
+  font-size:22px;
+  letter-spacing:.3em;
+}
+.jp-side{
+  position:fixed;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+  writing-mode:vertical-rl;
+  font-size:10px;
+  letter-spacing:.4em;
+  opacity:.06;
+  text-transform:none;
+  z-index:1;
+  pointer-events:none;
+}
+.jp-seal{
+  text-align:center;
+  font-size:10px;
+  letter-spacing:.3em;
+  opacity:.1;
+  text-transform:none;
+  margin-top:16px;
+}
 
 /* EMAIL FORM */
 .email-wrap{
@@ -163,6 +189,7 @@ footer{
   nav{padding:24px 20px}
   #landing{padding:100px 20px 120px}
   .cx{max-width:100%}
+  .jp-side{display:none}
   footer{padding:80px 20px 40px}
 }
 </style>
@@ -205,7 +232,7 @@ footer{
 <div class="m" data-es="LA PERSONA QUE SE SUPONE"></div>
 <div class="m" data-es="QUE DEBES SER"></div>
 <div class="sp"></div>
-<div class="dots">&bull;&bull;&bull;</div>
+<div class="dots">&#x2605;&#x2605;</div>
 <div class="sp"></div>
 <div class="m" data-es="YO DECIDO QU&Eacute; CREER">I DECIDE WHAT TO BELIEVE</div>
 <div class="m" data-es="YO DECIDO QU&Eacute; PENSAR">I DECIDE WHAT TO THINK</div>
@@ -239,6 +266,7 @@ footer{
 <div class="sp"></div>
 <div class="m" data-es="YO DEFINO EL EST&Aacute;NDAR">I DEFINE THE STANDARD</div>
 <div class="m" data-es="YO MOLDEO LA REALIDAD">I SHAPE REALITY</div>
+
 
 <!-- EMAIL -->
 <div class="email-wrap">

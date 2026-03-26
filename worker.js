@@ -43,7 +43,7 @@ export default {
           body: JSON.stringify({
             email,
             reactivate_existing: false,
-            send_welcome_email: false,
+            send_welcome_email: true,
           }),
         }
       );

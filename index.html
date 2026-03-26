@@ -21,24 +21,19 @@ body{
 
 ::selection{background:#2a2a2a;color:#fff}
 a{color:inherit;text-decoration:none}
-button,input,select,textarea{font:inherit;text-transform:uppercase;color:#2a2a2a}
-
-@keyframes sealMorph{
-  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
-  25%{rx:0;ry:0;transform:rotate(90deg)}
-  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
-  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
-}
-.seal-dot{
-  transform-origin:100px 100px;
-  animation:sealMorph 4s ease-in-out infinite;
-}
+button,input{font:inherit;text-transform:uppercase;color:#2a2a2a}
 
 @keyframes morph{
   0%,100%{border-radius:0;transform:rotate(0deg)}
   25%{border-radius:0;transform:rotate(90deg)}
   50%{border-radius:50%;transform:rotate(180deg) scale(.7)}
   75%{border-radius:50%;transform:rotate(270deg) scale(.7)}
+}
+@keyframes sealMorph{
+  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
+  25%{rx:0;ry:0;transform:rotate(90deg)}
+  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
+  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -65,8 +60,9 @@ nav{
 .lang.on{opacity:1}
 .lang:hover{opacity:.6}
 .lang-sep{opacity:.15}
-.nav-r{font-size:14px;letter-spacing:0;opacity:.3;transition:opacity .2s}
-.nav-r:hover{opacity:1}
+
+/* LAYOUT */
+.cx{max-width:420px;margin:0 auto}
 
 /* LANDING */
 #landing{
@@ -77,110 +73,64 @@ nav{
   text-align:center;
 }
 
-.cx{max-width:420px;margin:0 auto}
-
 .m{font-size:14px;line-height:1.7;letter-spacing:0;opacity:0}
 .m:empty{display:none}
-.dots{text-align:center;letter-spacing:.5em;font-size:14px}
 .m.v{animation:fadeIn .5s ease forwards}
 .sp{height:24px}
+.dots{text-align:center;letter-spacing:.5em;font-size:14px}
 
-/* MORE button */
-.more-wrap{
-  position:fixed;
-  bottom:32px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:10;
+/* EMAIL FORM */
+.email-wrap{
+  margin-top:80px;
+  text-align:center;
 }
-.more-btn{
-  background:#000;color:#fff;border:none;
-  font:inherit;text-transform:uppercase;
-  font-size:14px;letter-spacing:0;
-  cursor:pointer;
-  padding:6px 16px;
-  border-radius:100px;
-  transition:opacity .2s;
+.email-label{
+  font-size:14px;
+  letter-spacing:0;
+  opacity:.3;
+  margin-bottom:24px;
 }
-.more-btn:hover{opacity:.7}
-
-/* REST OF SITE */
-#rest{
-  display:none;
-  opacity:0;
-  transition:opacity .6s ease;
+.email-field{
+  display:flex;
+  border-bottom:1px solid rgba(0,0,0,.15);
+  max-width:320px;
+  margin:0 auto;
 }
-#rest.v{opacity:1}
-
-/* SECTIONS */
-section{
-  padding:120px 40px;
-  opacity:0;transform:translateY(6px);
-  transition:opacity .6s ease,transform .6s ease;
-  background-image:linear-gradient(rgba(0,0,0,.08),rgba(0,0,0,.08));
-  background-size:calc(100% - 32px) 1px;
-  background-position:center top;
-  background-repeat:no-repeat;
+.email-field input{
+  flex:1;
+  background:transparent;
+  border:none;
+  padding:14px 0;
+  font-size:14px;
+  letter-spacing:0;
+  outline:none;
+  text-align:center;
 }
-#rest section:first-child{padding-top:100px}
-section.v{opacity:1;transform:none}
-section{text-align:center}
-
-/* LABEL */
-.lb{font-size:11px;letter-spacing:.2em;opacity:.3;margin-bottom:24px}
-
-/* BLOCKS */
-.bk{margin-bottom:60px}
-.bk:last-child{margin-bottom:0}
-.bk-t{letter-spacing:0;margin-bottom:8px}
-.bk-d{opacity:.4;line-height:1.7;letter-spacing:0}
-
-.foot-line{margin-top:80px;letter-spacing:0}
-
-/* DIAGNOSIS */
-.dx{margin-bottom:24px;letter-spacing:0;line-height:1.7}
-.dx-f{opacity:.2;margin-top:60px;letter-spacing:0}
-
-/* SERVICES */
-.sv{margin-bottom:60px}
-.sv:last-child{margin-bottom:0}
-.sv-n{opacity:.2;margin-bottom:12px;letter-spacing:0}
-.sv-t{letter-spacing:0;margin-bottom:4px}
-.sv-d{opacity:.4;line-height:1.7;letter-spacing:0;margin-bottom:8px}
-.sv-p{letter-spacing:0}
-
-/* FORM */
-#apply{text-align:center}
-.ap-h{letter-spacing:0;margin-bottom:16px}
-.ap-s{opacity:.2;letter-spacing:0;margin-bottom:80px;line-height:1.7}
-
-.fg{margin-bottom:40px}
-.fg select,.fg textarea,.fg input{
-  width:100%;background:transparent;
-  border:none;border-bottom:1px solid rgba(0,0,0,.15);
-  padding:16px 0;font-size:14px;letter-spacing:0;
-  outline:none;border-radius:0;
-  -webkit-appearance:none;appearance:none;
-  transition:border-color .2s;
-}
-.fg select{cursor:pointer;color:rgba(0,0,0,.3)}
-.fg select.hv{color:#2a2a2a}
-.fg select option{background:#fff;color:#2a2a2a}
-.fg textarea{resize:none;height:160px;line-height:1.7}
-.fg select:focus,.fg textarea:focus,.fg input:focus{border-bottom-color:#2a2a2a}
 ::placeholder{color:rgba(0,0,0,.2);text-transform:uppercase}
-
-.sub-btn{
-  background:#000;color:#fff;border:none;
+.email-field input:focus{border-color:#2a2a2a}
+.email-field button{
+  background:none;border:none;
+  padding:14px 0 14px 16px;
   font-size:14px;letter-spacing:0;
-  padding:16px 60px;cursor:pointer;
+  cursor:pointer;opacity:.3;
   transition:opacity .2s;
 }
-.sub-btn:hover{opacity:.6}
+.email-field button:hover{opacity:1}
+.email-ok{
+  display:none;
+  font-size:14px;
+  letter-spacing:0;
+  margin-top:24px;
+}
+.email-err{
+  display:none;
+  font-size:14px;
+  letter-spacing:0;
+  margin-top:24px;
+  color:#FF3F26;
+}
 
-.ap-ok{display:none;letter-spacing:0}
-
-/* SERIAL — TE detail */
+/* SERIAL */
 .serial{
   position:fixed;
   bottom:32px;right:40px;
@@ -197,6 +147,10 @@ section{text-align:center}
   padding:120px 40px 0;
 }
 .seal{width:160px;height:160px}
+.seal-dot{
+  transform-origin:100px 100px;
+  animation:sealMorph 4s ease-in-out infinite;
+}
 
 /* FOOTER */
 footer{
@@ -205,21 +159,11 @@ footer{
 }
 
 /* MOBILE */
-.hd{display:block}
 @media(max-width:600px){
-  body{font-size:14px}
-  .hd{display:none}
   nav{padding:24px 20px}
-  .logo{font-size:14px}
-  .nav-mid,.nav-r{font-size:14px}
   #landing{padding:100px 20px 120px}
-  .m{font-size:14px}
-  section{padding:80px 20px}
   .cx{max-width:100%}
-  .lb,.bk,.sv,.dx,.dx-f,.ap-s,.ap-ok,.fg,.foot-line{text-align:left}
-  #apply .lb,#apply .ap-h,#apply .ap-s{text-align:center}
-  .sub-btn{display:block;width:100%}
-  footer{padding:80px 20px 40px;font-size:14px}
+  footer{padding:80px 20px 40px}
 }
 </style>
 </head>
@@ -228,13 +172,11 @@ footer{
 <nav>
   <a href="#" class="logo">PRXY<span class="cursor"></span></a>
   <div class="nav-mid"><button class="lang on" id="lEN">EN</button><span class="lang-sep">/</span><button class="lang" id="lES">ES</button></div>
-  <a href="#apply" class="nav-r" data-es="APLICAR">APPLY</a>
 </nav>
 
-<!-- TE detail — serial -->
 <div class="serial">PRXY-001 / REV.A</div>
 
-<!-- ══════ LANDING — MANIFESTO ══════ -->
+<!-- ══════ MANIFESTO ══════ -->
 <div id="landing">
 <div class="cx">
 <div class="m" data-es="SOMOS HIJOS DE UN MUNDO">WE'RE SONS OF A WORLD</div>
@@ -298,137 +240,36 @@ footer{
 <div class="m" data-es="YO DEFINO EL EST&Aacute;NDAR">I DEFINE THE STANDARD</div>
 <div class="m" data-es="YO MOLDEO LA REALIDAD">I SHAPE REALITY</div>
 
+<!-- EMAIL -->
+<div class="email-wrap">
+<div class="email-field" id="emailField">
+<input type="email" id="emailInput" placeholder="YOUR@EMAIL.COM" required>
+<button type="button" id="emailBtn">&rarr;</button>
 </div>
-</div>
-
-<div class="more-wrap">
-  <button class="more-btn" id="moreBtn" data-es="VER M&Aacute;S">SEE MORE</button>
-</div>
-
-<!-- ══════ REST OF SITE — HIDDEN UNTIL "SEE MORE" ══════ -->
-<div id="rest">
-
-<section id="who">
-<div class="cx">
-<div class="lb" data-es="CON QUI&Eacute;N TRABAJAMOS">WHO WE WORK WITH</div>
-
-<div class="bk">
-<div class="bk-t" data-es="MARCAS INDEPENDIENTES">INDEPENDENT BRANDS</div>
-<div class="bk-d" data-es="EL PRODUCTO EXISTE&lt;br&gt;PERO LA IDENTIDAD NO.&lt;br&gt;BUSCAS VOZ Y AUTORIDAD.">THE PRODUCT EXISTS<br>BUT THE IDENTITY DOESN'T.<br>YOU'RE LOOKING FOR VOICE<br>AND AUTHORITY.</div>
+<div class="email-ok" id="emailOk" data-es="RECIBIDO.">RECEIVED.</div>
+<div class="email-err" id="emailErr" data-es="INT&Eacute;NTALO DE NUEVO.">TRY AGAIN.</div>
 </div>
 
-<div class="bk">
-<div class="bk-t" data-es="ARTISTAS Y M&Uacute;SICOS">ARTISTS & MUSICIANS</div>
-<div class="bk-d" data-es="EL SONIDO PROMETE&lt;br&gt;PERO FALTA UN UNIVERSO QUE LO DEFINA.&lt;br&gt;BUSCAS NARRATIVA E IMAGINARIO.">THE SOUND DELIVERS<br>BUT THE UNIVERSE AROUND IT IS MISSING.<br>YOU'RE LOOKING FOR NARRATIVE AND IMAGERY.</div>
-</div>
-
-<div class="bk">
-<div class="bk-t" data-es="ACTORES E INT&Eacute;RPRETES">ACTORS & PERFORMERS</div>
-<div class="bk-d" data-es="CONSIGUES PAPELES&lt;br&gt;PERO NO CONSTRUYES NOMBRE.&lt;br&gt;QUIERES QUE TE ELIJAN&lt;br&gt;ANTES DEL CASTING.">YOU BOOK ROLES<br>BUT YOU DON'T BUILD A NAME.<br>YOU WANT TO BE CHOSEN<br>BEFORE THE CASTING CALL.</div>
-</div>
-
-<div class="bk">
-<div class="bk-t" data-es="EMPRESAS Y STARTUPS">COMPANIES & STARTUPS</div>
-<div class="bk-d" data-es="EL PRODUCTO FUNCIONA&lt;br&gt;PERO NADIE LO RECUERDA.&lt;br&gt;BUSCAS ALCANCE Y POSICI&Oacute;N.">THE PRODUCT WORKS<br>BUT NOBODY REMEMBERS IT.<br>YOU'RE LOOKING FOR REACH AND POSITION.</div>
 </div>
 </div>
-</section>
-
-<section id="diagnosis">
-<div class="cx">
-<div class="lb" data-es="DIAGN&Oacute;STICO">DIAGNOSIS</div>
-
-<div class="dx" data-es="TU MARCA TIENE FORMA.&lt;br&gt;PERO NO TIENE FUERZA.">YOUR BRAND HAS SHAPE.<br>BUT IT HAS NO FORCE.</div>
-<div class="dx" data-es="SABES QU&Eacute; VENDES.&lt;br&gt;PERO NO SABES QU&Eacute; REPRESENTAS.">YOU KNOW WHAT YOU SELL.<br>BUT YOU DON'T KNOW WHAT YOU STAND FOR.</div>
-<div class="dx" data-es="TU SONIDO EXISTE.&lt;br&gt;PERO TU IMAGEN A&Uacute;N NO LO REFLEJA.">YOUR SOUND EXISTS.<br>BUT YOUR IMAGE DOESN'T REFLECT IT YET.</div>
-<div class="dx" data-es="ACT&Uacute;AS&hellip;&lt;br&gt;PERO NO CONTROLAS LA HISTORIA.">YOU ACT&hellip;<br>BUT YOU DON'T CONTROL THE STORY.</div>
-<div class="dx" data-es="TIENES AUDIENCIA.&lt;br&gt;PERO NO TIENES AUTORIDAD.">YOU HAVE AN AUDIENCE.<br>BUT YOU DON'T HAVE AUTHORITY.</div>
-<div class="dx" data-es="PRODUCES CONTENIDO.&lt;br&gt;PERO NADIE LO RECUERDA.">YOU CREATE CONTENT.<br>BUT NOBODY REMEMBERS IT.</div>
-</div>
-</section>
-
-<section id="interventions">
-<div class="cx">
-<div class="lb" data-es="QU&Eacute; HACEMOS">WHAT WE DO</div>
-
-<div class="sv">
-<div class="sv-t" data-es="DIRECCI&Oacute;N CREATIVA">CREATIVE DIRECTION</div>
-<div class="sv-d" data-es="NOS SENTAMOS CONTIGO Y REDEFINIMOS&lt;br&gt;LA DIRECCI&Oacute;N DE TU PROYECTO.&lt;br&gt;QU&Eacute; DECIR, C&Oacute;MO DECIRLO,&lt;br&gt;POR QU&Eacute; DECIRLO.">WE SIT WITH YOU AND REDEFINE YOUR PROJECT'S DIRECTION. WHAT TO SAY, HOW TO SAY IT, WHY TO SAY IT.</div>
-</div>
-
-<div class="sv">
-<div class="sv-t" data-es="IDENTIDAD Y ESTRATEGIA">IDENTITY & STRATEGY</div>
-<div class="sv-d" data-es="DEFINIMOS JUNTOS QUI&Eacute;N ERES Y POR QU&Eacute; IMPORTAS. POSICI&Oacute;N, NARRATIVA, SISTEMA VISUAL. TODO LO QUE HACE QUE TE RECONOZCAN ANTES DE QUE HABLES.">WE DEFINE TOGETHER WHO YOU ARE AND WHY YOU MATTER. POSITION, NARRATIVE, VISUAL SYSTEM. EVERYTHING THAT MAKES YOU RECOGNIZED BEFORE YOU SPEAK.</div>
-</div>
-
-<div class="sv">
-<div class="sv-t" data-es="SESI&Oacute;N DE CONSULTOR&Iacute;A">CONSULTANCY SESSION</div>
-<div class="sv-d" data-es="UNA CONVERSACI&Oacute;N QUE CAMBIA EL RUMBO. PARA PROYECTOS QUE NECESITAN&lt;br&gt;UNA CHISPA, NO UN PROCESO.">ONE CONVERSATION THAT CHANGES THE COURSE. FOR PROJECTS THAT NEED<br>A SPARK, NOT A PROCESS.</div>
-<div class="sv-p" data-es="DESDE &euro;150">FROM &euro;150</div>
-</div>
-</div>
-</section>
-
-<section id="apply">
-<div class="cx">
-<div class="lb" data-es="TRABAJA CON PRXY">WORK WITH PRXY</div>
-
-<div id="applyForm">
-<div class="ap-h" data-es="&iquest;EN QUI&Eacute;N QUIERES CONVERTIRTE?">WHO DO YOU WANT TO BECOME?</div>
-<div class="ap-s" data-es="TRABAJAMOS CON PERSONAS Y MARCAS&lt;br&gt;QUE EST&Aacute;N LISTAS PARA DISE&Ntilde;AR&lt;br&gt;C&Oacute;MO QUIEREN SER CONOCIDAS">WE WORK WITH PEOPLE AND BRANDS<br>WHO ARE READY TO DESIGN<br>HOW THEY WANT TO BE KNOWN</div>
-
-<form id="contactForm" autocomplete="off">
-<div class="fg">
-<select id="formType" required>
-<option value="" disabled selected data-es="SOY &mdash;">I AM &mdash;</option>
-<option value="fashion" data-es="UNA MARCA DE MODA">A FASHION BRAND</option>
-<option value="musician" data-es="UN M&Uacute;SICO">A MUSICIAN</option>
-<option value="actor" data-es="UN ACTOR">AN ACTOR</option>
-<option value="company" data-es="UNA EMPRESA / STARTUP">A COMPANY / STARTUP</option>
-</select>
-</div>
-<div class="fg">
-<textarea id="formDesc" placeholder="TELL US ABOUT YOUR PROJECT" data-es-ph="CU&Eacute;NTANOS TU PROYECTO"></textarea>
-</div>
-<div class="fg">
-<input type="email" id="formEmail" placeholder="YOUR@EMAIL.COM" required>
-</div>
-<div class="fg">
-<input type="tel" id="formPhone" placeholder="+34 600 000 000" data-es-ph="+34 600 000 000">
-</div>
-<button type="submit" class="sub-btn" data-es="ENVIAR">SEND</button>
-</form>
-</div>
-
-<div class="ap-ok" id="applyOk" data-es="RECIBIDO. ESTAREMOS EN CONTACTO.">RECEIVED. WE'LL BE IN TOUCH.</div>
-</div>
-</section>
 
 <!-- SEAL -->
 <div class="seal-wrap">
 <svg class="seal" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<!-- outer circle -->
 <circle cx="100" cy="100" r="96" stroke="#2a2a2a" stroke-width=".4"/>
-<!-- longitude ellipses -->
 <ellipse cx="100" cy="100" rx="72" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
 <ellipse cx="100" cy="100" rx="48" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
 <ellipse cx="100" cy="100" rx="20" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- latitude ellipses -->
 <ellipse cx="100" cy="100" rx="96" ry="72" stroke="#2a2a2a" stroke-width=".3"/>
 <ellipse cx="100" cy="100" rx="96" ry="48" stroke="#2a2a2a" stroke-width=".3"/>
 <ellipse cx="100" cy="100" rx="96" ry="20" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- axes -->
 <line x1="4" y1="100" x2="196" y2="100" stroke="#2a2a2a" stroke-width=".3"/>
 <line x1="100" y1="4" x2="100" y2="196" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- center dot -->
 <rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
 </svg>
 </div>
 
-
 <footer>PRXY.STUDIO<br>CREATIVE DIRECTION<br><span id="yr"></span></footer>
-
-</div>
 
 <script>
 (function(){
@@ -438,7 +279,6 @@ footer{
   var lang='en';
   var en=new Map();
 
-  // store EN markup from DOM
   document.querySelectorAll('[data-es]').forEach(function(el){
     en.set(el,el.innerHTML);
   });
@@ -450,17 +290,11 @@ footer{
     en.forEach(function(html,el){
       el.innerHTML=l==='es'?el.getAttribute('data-es'):html;
     });
-    // placeholders
-    document.querySelectorAll('[data-es-ph]').forEach(function(el){
-      if(!el._enph)el._enph=el.placeholder;
-      el.placeholder=l==='es'?el.getAttribute('data-es-ph'):el._enph;
-    });
   }
 
   document.getElementById('lEN').addEventListener('click',function(){setLang('en')});
   document.getElementById('lES').addEventListener('click',function(){setLang('es')});
 
-  // auto-detect
   if(/^es\b/i.test(navigator.language||''))setLang('es');
 
   // ── manifesto lines stagger ──
@@ -484,37 +318,44 @@ footer{
   },{threshold:0});
   ml.forEach(function(l){mo.observe(l)});
 
-  // ── "SEE MORE" reveals rest ──
-  document.getElementById('moreBtn').addEventListener('click',function(){
-    this.style.display='none';
-    var rest=document.getElementById('rest');
-    rest.style.display='block';
-    rest.offsetHeight;
-    rest.classList.add('v');
+  // ── Email subscribe via Cloudflare Worker ──
+  var WORKER_URL='https://prxy-email.prxystudio.workers.dev';
 
-    var ss=rest.querySelectorAll('section');
-    var so=new IntersectionObserver(function(ee){
-      ee.forEach(function(e){
-        if(e.isIntersecting){e.target.classList.add('v');so.unobserve(e.target)}
-      });
-    },{threshold:0});
-    ss.forEach(function(s){so.observe(s)});
+  function submitEmail(){
+    var input=document.getElementById('emailInput');
+    var email=input.value.trim();
+    if(!email||email.indexOf('@')===-1)return;
 
-    setTimeout(function(){
-      ss[0].scrollIntoView({behavior:'smooth'});
-    },100);
+    var ok=document.getElementById('emailOk');
+    var err=document.getElementById('emailErr');
+    var field=document.getElementById('emailField');
+
+    ok.style.display='none';
+    err.style.display='none';
+
+    fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email})
+    })
+    .then(function(res){
+      if(res.ok){
+        field.style.display='none';
+        ok.style.display='block';
+      } else {
+        err.style.display='block';
+      }
+    })
+    .catch(function(){
+      err.style.display='block';
+    });
+  }
+
+  document.getElementById('emailBtn').addEventListener('click',submitEmail);
+  document.getElementById('emailInput').addEventListener('keydown',function(e){
+    if(e.key==='Enter')submitEmail();
   });
 
-  // select
-  var sel=document.getElementById('formType');
-  sel.addEventListener('change',function(){this.classList.toggle('hv',this.value!=='')});
-
-  // form
-  document.getElementById('contactForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    document.getElementById('applyForm').style.display='none';
-    document.getElementById('applyOk').style.display='block';
-  });
 })();
 </script>
 </body>

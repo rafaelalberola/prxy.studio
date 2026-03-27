@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PRXY.STUDIO</title>
-<link rel="icon" type="image/png" href="src/images/favico.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 @font-face{font-family:'GT Pressura Mono';src:url('fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff2') format('woff2'),url('fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff') format('woff'),url('fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -20,19 +20,12 @@ body{
 
 ::selection{background:#4a4a4a;color:#fff}
 a{color:inherit;text-decoration:none}
-button,input{font:inherit;text-transform:uppercase;color:#4a4a4a}
 
 @keyframes morph{
   0%,100%{border-radius:0;transform:rotate(0deg)}
   25%{border-radius:0;transform:rotate(90deg)}
   50%{border-radius:50%;transform:rotate(180deg) scale(.7)}
   75%{border-radius:50%;transform:rotate(270deg) scale(.7)}
-}
-@keyframes sealMorph{
-  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
-  25%{rx:0;ry:0;transform:rotate(90deg)}
-  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
-  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -54,108 +47,41 @@ nav{
   margin-bottom:2px;
   animation:morph 4s ease-in-out infinite;
 }
-.nav-mid{display:flex;gap:4px;font-size:15px;letter-spacing:0}
-.lang{background:none;border:none;font:inherit;text-transform:uppercase;letter-spacing:0;padding:0;cursor:pointer;opacity:.15;transition:opacity .2s}
-.lang.on{opacity:1}
-.lang:hover{opacity:.6}
-.lang-sep{opacity:.15}
+.nav-lang{font-size:15px;letter-spacing:0;opacity:.25;cursor:pointer;transition:opacity .2s}
+.nav-lang:hover{opacity:1}
 
-/* LAYOUT */
-.cx{max-width:420px;margin:0 auto}
-
-/* LANDING */
-#landing{
+/* INTRO */
+#intro{
   min-height:100vh;
   display:flex;
   align-items:center;
-  padding:120px 40px 120px;
+  justify-content:center;
+  padding:120px 40px;
   text-align:center;
 }
-
-.m{font-size:15px;line-height:1.7;letter-spacing:0;opacity:0;transform:translateY(4px);transition:opacity .4s ease,transform .4s ease}
-.m:empty{display:none}
-.m.v{opacity:1;transform:translateY(0)}
-.sp{height:24px}
-.dots{opacity:0;transition:opacity .6s ease}
-.dots.v{opacity:1}
-/* JP glyphs */
-.dots{
-  text-align:center;
-  font-size:22px;
-  letter-spacing:.3em;
-}
-.jp-side{
-  position:fixed;
-  left:20px;
-  top:50%;
-  transform:translateY(-50%);
-  writing-mode:vertical-rl;
-  font-size:10px;
-  letter-spacing:.4em;
-  opacity:.06;
-  text-transform:none;
-  z-index:1;
-  pointer-events:none;
-}
-.jp-seal{
-  text-align:center;
-  font-size:10px;
-  letter-spacing:.3em;
-  opacity:.1;
-  text-transform:none;
-  margin-top:16px;
-}
-
-/* EMAIL FORM */
-.email-wrap{
-  margin-top:80px;
-  text-align:center;
-}
-.email-label{
+.intro-title{
   font-size:15px;
+  line-height:1.7;
   letter-spacing:0;
-  opacity:.3;
-  margin-bottom:24px;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity .6s ease,transform .6s ease;
 }
-.email-field{
-  display:flex;
-  border-bottom:1px solid rgba(0,0,0,.15);
-  max-width:320px;
-  margin:0 auto;
-}
-.email-field input{
-  flex:1;
-  background:transparent;
-  border:none;
-  padding:14px 0;
-  font-size:15px;
-  letter-spacing:0;
-  outline:none;
-  text-align:center;
-}
-::placeholder{color:rgba(0,0,0,.2);text-transform:uppercase}
-.email-field input:focus{border-color:#4a4a4a}
-.email-field button{
-  background:none;border:none;
-  padding:14px 0 14px 16px;
+.intro-title.v{opacity:1;transform:translateY(0)}
+.intro-btn{
+  display:inline-block;
+  background:#000;color:#fff;border:none;
+  font:inherit;text-transform:uppercase;
   font-size:15px;letter-spacing:0;
-  cursor:pointer;opacity:.3;
-  transition:opacity .2s;
+  cursor:pointer;
+  padding:6px 16px;
+  border-radius:100px;
+  margin-top:60px;
+  opacity:0;
+  transition:opacity .6s ease;
 }
-.email-field button:hover{opacity:1}
-.email-ok{
-  display:none;
-  font-size:15px;
-  letter-spacing:0;
-  margin-top:24px;
-}
-.email-err{
-  display:none;
-  font-size:15px;
-  letter-spacing:0;
-  margin-top:24px;
-  color:#FF3F26;
-}
+.intro-btn.v{opacity:1}
+.intro-btn:hover{opacity:.7}
 
 /* SERIAL */
 .serial{
@@ -169,231 +95,63 @@ nav{
   color:#4a4a4a;
 }
 
-/* SEAL */
-.seal-wrap{
-  display:flex;justify-content:center;
-  padding:16px 40px 0;
-}
-.seal{width:160px;height:160px}
-.seal-dot{
-  transform-origin:100px 100px;
-  animation:sealMorph 4s ease-in-out infinite;
-}
-
-/* FOOTER */
-footer{
-  text-align:center;padding:60px 40px 60px;
-  font-size:15px;letter-spacing:0;opacity:.25;color:#4a4a4a;
-}
-
 /* MOBILE */
 @media(max-width:600px){
   nav{padding:24px 20px}
-  #landing{padding:100px 20px 120px}
-  .cx{max-width:100%}
-  .jp-side{display:none}
-  footer{padding:80px 20px 40px}
+  #intro{padding:100px 20px}
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#" class="logo">PRXY<span class="cursor"></span></a>
-  <div class="nav-mid"><button class="lang on" id="lEN">EN</button><span class="lang-sep">/</span><button class="lang" id="lES">ES</button></div>
+  <a href="/" class="logo">PRXY<span class="cursor"></span></a>
+  <a href="#" class="nav-lang" id="langToggle">ES</a>
 </nav>
 
 <div class="serial">PRXY-001 / REV.A</div>
 
-<!-- ══════ MANIFESTO ══════ -->
-<div id="landing">
-<div class="cx">
-<div class="m" data-es="SOMOS HIJOS DE UN MUNDO">WE'RE SONS OF A WORLD</div>
-<div class="m" data-es="QUE CRECI&Oacute; DEMASIADO R&Aacute;PIDO">THAT GREW UP TOO FAST</div>
-<div class="sp"></div>
-<div class="m" data-es="UN SISTEMA QUE TE NECESITA OCUPADO">A SYSTEM THAT NEEDS YOU BUSY</div>
-<div class="m" data-es="NO FELIZ. OCUPADO.">NOT HAPPY. BUSY.</div>
-<div class="m" data-es="NO LIBRE. OCUPADO.">NOT FREE. BUSY.</div>
-<div class="m" data-es="NO VIVO. OCUPADO.">NOT ALIVE. BUSY.</div>
-<div class="sp"></div>
-<div class="m" data-es="DISE&Ntilde;ARON EL SISTEMA">THEY DESIGNED THE SYSTEM</div>
-<div class="m" data-es="Y LO SEGUISTE">AND YOU FOLLOWED IT</div>
-<div class="sp"></div>
-<div class="m" data-es="DESEAS LO QUE TE HAN VENDIDO">YOU WANT WHAT THEY SOLD YOU</div>
-<div class="m" data-es="CREES LO QUE TE HAN CONTADO">YOU BELIEVE WHAT THEY TOLD YOU</div>
-<div class="m" data-es="REPITES LO QUE TE HAN ENSE&Ntilde;ADO">YOU REPEAT WHAT THEY TAUGHT YOU</div>
-<div class="sp"></div>
-<div class="m" data-es="TE DICEN QUE">THEY TELL YOU</div>
-<div class="m" data-es="SER DIFERENTE">BEING DIFFERENT</div>
-<div class="m" data-es="EST&Aacute; MAL">IS WRONG</div>
-<div class="sp"></div>
-<div class="m" data-es="CREARON EL EST&Aacute;NDAR">THEY BUILT THE STANDARD</div>
-<div class="m" data-es="LA CARA. EL CUERPO. LA CASA.">THE FACE. THE BODY. THE HOUSE.</div>
-<div class="m" data-es="LA VIDA QUE SE SUPONE">THE LIFE YOU'RE SUPPOSED TO WANT</div>
-<div class="m" data-es="QUE DEBES TENER">THE PERSON YOU'RE SUPPOSED TO BE</div>
-<div class="m" data-es="LA PERSONA QUE SE SUPONE"></div>
-<div class="m" data-es="QUE DEBES SER"></div>
-<div class="sp"></div>
-<div class="dots">&#x2605;&#x2605;</div>
-<div class="sp"></div>
-<div class="m" data-es="YO DECIDO QU&Eacute; CREER">I DECIDE WHAT TO BELIEVE</div>
-<div class="m" data-es="YO DECIDO QU&Eacute; PENSAR">I DECIDE WHAT TO THINK</div>
-<div class="m" data-es="YO DECIDO QU&Eacute; SENTIR">I DECIDE WHAT TO FEEL</div>
-<div class="sp"></div>
-<div class="m" data-es="Y DECIDO NO CREER">AND I DECIDE TO BELIEVE</div>
-<div class="m" data-es="EN NADA">IN NOTHING</div>
-<div class="sp"></div>
-<div class="m" data-es="NADA ME DEFINE">NOTHING DEFINES ME</div>
-<div class="m" data-es="NADA ME LIMITA">NOTHING LIMITS ME</div>
-<div class="sp"></div>
-<div class="m" data-es="NO SOY UN NOMBRE">I'M NOT A NAME</div>
-<div class="m" data-es="NO SOY UNA ETIQUETA">I'M NOT A LABEL</div>
-<div class="m" data-es="NO SOY HUMANO">I'M NOT HUMAN</div>
-<div class="sp"></div>
-<div class="m" data-es="SOY UNA IDEA">I'M AN IDEA</div>
-<div class="m" data-es="ATEMPORAL">TIMELESS</div>
-<div class="sp"></div>
-<div class="m" data-es="TENGO UNA VISI&Oacute;N">I HAVE A VISION</div>
-<div class="m" data-es="LA EJECUTO">I EXECUTE IT</div>
-<div class="sp"></div>
-<div class="m" data-es="ELIJO LO QUE VA A PASAR">I CHOOSE WHAT HAPPENS</div>
-<div class="m" data-es="DISE&Ntilde;O C&Oacute;MO VA A PASAR">I DESIGN HOW IT HAPPENS</div>
-<div class="m" data-es="LO VEO SUCEDER ANTE MIS OJOS">I WATCH IT UNFOLD BEFORE MY EYES</div>
-<div class="m" data-es="Y CONVIERTO ESE HOY EN SIEMPRE">AND I MAKE TODAY LAST FOREVER</div>
-<div class="sp"></div>
-<div class="m" data-es="NO CUMPLO LAS EXPECTATIVAS">I DON'T MEET EXPECTATIONS</div>
-<div class="m" data-es="DISE&Ntilde;O LAS EXPECTATIVAS">I DESIGN EXPECTATIONS</div>
-<div class="sp"></div>
-<div class="m" data-es="NO SOY LO QUE SE CUENTA DE M&Iacute;">I'M NOT WHAT THEY SAY ABOUT ME</div>
-<div class="m" data-es="DISE&Ntilde;O LA NARRATIVA">I DESIGN THE NARRATIVE</div>
-<div class="sp"></div>
-<div class="m" data-es="ME DISE&Ntilde;O A M&Iacute; MISMO">I DESIGN MYSELF</div>
-<div class="m" data-es="ME DISE&Ntilde;O A M&Iacute; MISMO">I DESIGN MYSELF</div>
-<div class="m" data-es="ME DISE&Ntilde;O A M&Iacute; MISMO">I DESIGN MYSELF</div>
-<div class="sp"></div>
-<div class="m" data-es="YO DEFINO EL EST&Aacute;NDAR">I DEFINE THE STANDARD</div>
-<div class="m" data-es="YO MOLDEO LA REALIDAD">I SHAPE REALITY</div>
-
-
-<!-- EMAIL -->
-<div class="email-wrap">
-<div class="email-field" id="emailField">
-<input type="email" id="emailInput" placeholder="YOUR@EMAIL.COM" required>
-<button type="button" id="emailBtn">&rarr;</button>
-</div>
-<div class="email-ok" id="emailOk" data-es="RECIBIDO.">RECEIVED.</div>
-<div class="email-err" id="emailErr" data-es="INT&Eacute;NTALO DE NUEVO.">TRY AGAIN.</div>
-</div>
-
+<!-- ══════ INTRO ══════ -->
+<div id="intro">
+<div>
+<div class="intro-title" id="introTitle" data-es="SI TE PIDO QUE NOMBRES<br>TODO LO QUE AMAS,<br>¿CUÁNTO TARDAS<br>EN NOMBRARTE A TI MISMO?">IF I ASKED YOU TO NAME<br>EVERYTHING YOU LOVE,<br>HOW LONG UNTIL<br>YOU NAME YOURSELF?</div>
+<a href="/manifesto" class="intro-btn" id="introBtn" data-es="LEER MANIFIESTO">READ MANIFESTO</a>
 </div>
 </div>
-
-<!-- SEAL -->
-<div class="seal-wrap">
-<svg class="seal" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="100" cy="100" r="96" stroke="#4a4a4a" stroke-width=".9"/>
-<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#4a4a4a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#4a4a4a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#4a4a4a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#4a4a4a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#4a4a4a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#4a4a4a" stroke-width=".7"/>
-<line x1="4" y1="100" x2="196" y2="100" stroke="#4a4a4a" stroke-width=".7"/>
-<line x1="100" y1="4" x2="100" y2="196" stroke="#4a4a4a" stroke-width=".7"/>
-<rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
-</svg>
-</div>
-
-<footer>PRXY<br><span id="yr"></span></footer>
 
 <script>
 (function(){
-  document.getElementById('yr').textContent=new Date().getFullYear();
-
-  // ── i18n ──
-  var lang='en';
-  var en=new Map();
-
-  document.querySelectorAll('[data-es]').forEach(function(el){
-    en.set(el,el.innerHTML);
-  });
-
-  function setLang(l,pushState){
-    lang=l;
-    document.getElementById('lEN').classList.toggle('on',l==='en');
-    document.getElementById('lES').classList.toggle('on',l==='es');
-    en.forEach(function(html,el){
-      el.innerHTML=l==='es'?el.getAttribute('data-es'):html;
+  function setLang(lang){
+    localStorage.setItem('prxy-lang',lang);
+    var els=document.querySelectorAll('[data-es]');
+    els.forEach(function(el){
+      if(lang==='es'){
+        if(!el.getAttribute('data-en'))el.setAttribute('data-en',el.innerHTML);
+        el.innerHTML=el.getAttribute('data-es');
+      }else{
+        if(el.getAttribute('data-en'))el.innerHTML=el.getAttribute('data-en');
+      }
     });
-    if(pushState!==false){
-      var path=l==='es'?'/es':'/' ;
-      history.pushState(null,null,path);
-    }
-    document.documentElement.lang=l;
+    var t=document.getElementById('langToggle');
+    if(t)t.textContent=lang==='es'?'EN':'ES';
+    document.documentElement.lang=lang;
   }
 
-  document.getElementById('lEN').addEventListener('click',function(){setLang('en')});
-  document.getElementById('lES').addEventListener('click',function(){setLang('es')});
+  var lang=localStorage.getItem('prxy-lang')||'en';
+  if(lang==='es')setLang('es');
 
-  // detect from URL first, then browser
-  var initLang=location.pathname.indexOf('/es')===0?'es':
-    /^es\b/i.test(navigator.language||'')?'es':'en';
-  setLang(initLang,false);
-
-  window.addEventListener('popstate',function(){
-    setLang(location.pathname.indexOf('/es')===0?'es':'en',false);
+  document.getElementById('langToggle').addEventListener('click',function(e){
+    e.preventDefault();
+    var c=localStorage.getItem('prxy-lang')||'en';
+    setLang(c==='es'?'en':'es');
   });
-
-  // ── manifesto smooth staggered reveal — all in ~3s ──
-  var items=Array.from(document.querySelectorAll('.m,.dots'));
-  var total=items.length;
-  var duration=3000; // 3 seconds total
-  var delay=duration/total;
 
   setTimeout(function(){
-    items.forEach(function(el,i){
-      setTimeout(function(){el.classList.add('v')},i*delay);
-    });
+    document.getElementById('introTitle').classList.add('v');
   },300);
-
-  // ── Email subscribe via Cloudflare Worker ──
-  var WORKER_URL='https://prxy-email.prxystudio.workers.dev';
-
-  function submitEmail(){
-    var input=document.getElementById('emailInput');
-    var email=input.value.trim();
-    if(!email||email.indexOf('@')===-1)return;
-
-    var ok=document.getElementById('emailOk');
-    var err=document.getElementById('emailErr');
-    var field=document.getElementById('emailField');
-
-    ok.style.display='none';
-    err.style.display='none';
-
-    fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:email})
-    })
-    .then(function(res){
-      if(res.ok){
-        field.style.display='none';
-        ok.style.display='block';
-      } else {
-        err.style.display='block';
-      }
-    })
-    .catch(function(){
-      err.style.display='block';
-    });
-  }
-
-  document.getElementById('emailBtn').addEventListener('click',submitEmail);
-  document.getElementById('emailInput').addEventListener('keydown',function(e){
-    if(e.key==='Enter')submitEmail();
-  });
-
+  setTimeout(function(){
+    document.getElementById('introBtn').classList.add('v');
+  },1200);
 })();
 </script>
 </body>

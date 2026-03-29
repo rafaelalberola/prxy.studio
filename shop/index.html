@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>@media(pointer:fine){html,html *{cursor:none!important}}body{opacity:1}
+.dot-cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.25,.1,.25,1),height .2s cubic-bezier(.25,.1,.25,1),opacity .2s ease}
+.dot-cursor.hover{width:40px;height:40px}
+</style>
+<script>
+(function(){
+  if(matchMedia('(pointer:coarse)').matches){return}
+  var dot=document.createElement('div');
+  dot.className='dot-cursor';
+  var sp=sessionStorage.getItem('prxy-cursor');
+  var mx=0,my=0,dx=0,dy=0,magTarget=null,hasMoved=false;
+  if(sp){try{var pp=JSON.parse(sp);mx=pp.x;my=pp.y;dx=pp.x;dy=pp.y;dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';hasMoved=true}catch(e){}}
+  if(!hasMoved)dot.style.opacity='0';
+  document.documentElement.appendChild(dot);
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;if(!hasMoved){hasMoved=true;dx=mx;dy=my;dot.style.opacity='1'}sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}))});
+  document.addEventListener('mouseleave',function(){dot.style.opacity='0'});
+  document.addEventListener('mouseenter',function(){dot.style.opacity='1'});
+  function lerp(a,b,t){return a+(b-a)*t}
+  (function tick(){
+    if(magTarget){try{var r=magTarget.getBoundingClientRect();dx=lerp(dx,r.left+r.width/2,.15);dy=lerp(dy,r.top+r.height/2,.15)}catch(e){magTarget=null}}
+    else{dx=lerp(dx,mx,.2);dy=lerp(dy,my,.2)}
+    dot.style.left=dx+'px';dot.style.top=dy+'px';
+    requestAnimationFrame(tick);
+  })();
+  var interactives='a,button,.nav-r,.lang-btn,.intro-btn,.more-btn,.sub-btn,.nav-cart';
+  document.addEventListener('mouseover',function(e){
+    if(location.pathname.indexOf('/shop')===0)return;
+    var t=e.target.closest(interactives);
+    if(t){dot.classList.add('hover');magTarget=t}
+  });
+  document.addEventListener('mouseout',function(e){
+    if(location.pathname.indexOf('/shop')===0)return;
+    var t=e.target.closest(interactives);
+    if(!t)return;
+    var rel=e.relatedTarget;
+    if(rel&&rel.closest&&rel.closest(interactives))return;
+    dot.classList.remove('hover');magTarget=null;
+  });
+
+  function spaNavigate(url,push){
+    magTarget=null;dot.classList.remove('hover');
+    var ld=document.getElementById('prxyLoader');if(ld){ld.classList.remove('out');ld.style.display='flex'}
+    setTimeout(function(){
+      fetch(url).then(function(r){return r.text()}).then(function(html){
+        var dp=new DOMParser();
+        var doc=dp.parseFromString(html,'text/html');
+        document.title=doc.title||'';
+        var oldS=document.head.querySelectorAll('style');
+        for(var i=1;i<oldS.length;i++)oldS[i].remove();
+        var newS=doc.head.querySelectorAll('style');
+        for(var i=1;i<newS.length;i++)document.head.appendChild(newS[i]);
+        document.body.innerHTML='';
+        var nodes=doc.body.childNodes;
+        while(nodes.length){document.body.appendChild(nodes[0])}
+        var scripts=Array.from(document.body.querySelectorAll('script'));
+        scripts.forEach(function(old){
+          var s=document.createElement('script');
+          if(old.src)s.src=old.src;
+          else s.textContent=old.textContent;
+          old.parentNode.replaceChild(s,old);
+        });
+        if(push)history.pushState(null,'',url);
+        var hash=url.split('#')[1];
+        if(hash){var el=document.getElementById(hash);if(el)el.scrollIntoView()}
+        else window.scrollTo(0,0);
+        requestAnimationFrame(function(){var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}});
+      }).catch(function(){location.href=url});
+    },350);
+  }
+
+  document.addEventListener('click',function(e){
+    var link=e.target.closest('a');
+    if(!link)return;
+    var href=link.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:'))return;
+    if(link.target==='_blank')return;
+    try{var url=new URL(href,location.origin)}catch(e){return}
+    if(url.origin!==location.origin)return;
+    if(url.href===location.href)return;
+    e.preventDefault();
+    spaNavigate(url.href,true);
+  });
+  window.addEventListener('popstate',function(){spaNavigate(location.href,false)});
+})();
+</script>
+<title>SHOP — PRXY.STUDIO</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+@font-face{font-family:'GT Pressura Mono';src:url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff2') format('woff2'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff') format('woff'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#fbfbfb;
+  color:#1a1a1a;
+  font:500 15px/1.5 'GT Pressura Mono',monospace;
+  -webkit-font-smoothing:antialiased;
+  text-transform:uppercase;
+  letter-spacing:-0.02em;
+  overflow-x:hidden;
+}
+
+::selection{background:#1a1a1a;color:#fff}
+a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
+
+@keyframes morph{
+  0%,100%{border-radius:0;transform:rotate(0deg)}
+  25%{border-radius:0;transform:rotate(90deg)}
+  50%{border-radius:50%;transform:rotate(180deg) scale(.7)}
+  75%{border-radius:50%;transform:rotate(270deg) scale(.7)}
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.prxy-loader{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;
+  background:#fbfbfb;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .3s ease;
+}
+.prxy-loader.out{opacity:0;pointer-events:none}
+.prxy-loader-dot{
+  width:12px;height:12px;
+  background:#FF4D2A;
+  animation:morph 4s ease-in-out infinite;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:10;
+  display:flex;flex-direction:column;
+  padding:20px 40px 0;
+  background:rgba(251,251,251,.5);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+}
+.nav-top{display:flex;justify-content:space-between;align-items:center;width:100%}
+.nav-acts{display:flex;gap:16px;align-items:center}
+.nav-links{display:flex;gap:20px;align-items:center;justify-content:center;padding:16px 0 16px}
+.logo{letter-spacing:0;font-size:15px;line-height:24px;display:flex;align-items:center}
+.cursor{
+  display:block;
+  width:10px;height:10px;
+  background:#FF4D2A;
+  margin-left:6px;
+  flex-shrink:0;
+  animation:morph 4s ease-in-out infinite;
+}
+.nav-r{font-size:15px;letter-spacing:0;opacity:.25;transition:opacity .2s}
+.nav-r:hover{opacity:1}
+.nav-r.active{opacity:1}
+.nav-cart{position:relative;display:flex;align-items:center;height:24px;transition:opacity .2s}
+.nav-cart svg{display:block;opacity:.35;transition:opacity .2s}
+.nav-cart:hover svg{opacity:1}
+.cart-badge{position:absolute;top:-6px;right:-8px;background:#FF4D2A;color:#fff;font-size:9px;min-width:14px;height:14px;border-radius:50%;display:none;align-items:center;justify-content:center;line-height:1;letter-spacing:0}
+.cart-badge.show{display:flex}
+.nav-lang-wrap{display:flex;gap:6px;align-items:center}
+.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;opacity:.25;cursor:pointer;transition:opacity .2s}
+.lang-btn:hover{opacity:.6}
+.lang-btn.on{opacity:1}
+
+.serial{position:fixed;bottom:32px;right:2px;font-size:8px;letter-spacing:.1em;opacity:.25;z-index:5;writing-mode:vertical-rl;color:#1a1a1a}
+
+/* ── GALLERY ── */
+.gallery{
+  max-width:1100px;margin:0 auto;
+  padding:200px 40px 120px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:40px;
+}
+.gallery-item{cursor:pointer;opacity:0;animation:fadeIn .6s ease forwards}
+.gallery-img{width:100%;aspect-ratio:1;object-fit:contain;margin-bottom:16px;transition:transform .3s ease}
+.gallery-name{font-size:15px;letter-spacing:0;margin-bottom:4px;text-align:center}
+.gallery-price{font-size:15px;letter-spacing:0;opacity:.4;text-align:center}
+
+/* ── DETAIL ── */
+.detail{display:none}
+.detail.active{display:block}
+
+.product-section{
+  max-width:1100px;margin:0 auto;
+  padding:130px 40px 60px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 80px;
+  opacity:0;animation:fadeIn .6s ease .2s forwards;
+}
+
+/* CAROUSEL */
+.carousel{position:relative;width:100%;aspect-ratio:1;overflow:hidden;cursor:grab;grid-column:1;grid-row:1/3}
+.carousel:active{cursor:grabbing}
+.carousel-track{display:flex;height:100%;transition:transform .4s cubic-bezier(.25,.1,.25,1)}
+.carousel-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.carousel-slide img{max-width:90%;max-height:90%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
+.carousel-slide img.hat-carousel{max-width:55%;max-height:55%}
+.carousel-dots{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:8px}
+.carousel-dot{width:6px;height:6px;background:#1a1a1a;opacity:.15;border-radius:50%;cursor:pointer;transition:opacity .2s}
+.carousel-dot.active{opacity:.6}
+.carousel-nav{position:absolute;top:0;left:0;right:0;bottom:0;display:flex}
+.carousel-prev,.carousel-next{flex:1;cursor:pointer}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #1a1a1a;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:1;transition:opacity .2s;z-index:2;font-size:15px;color:#1a1a1a;background:#fbfbfb}
+.carousel-arrow:hover{opacity:.7}
+.carousel-arrow.arr-l{left:12px}
+.carousel-arrow.arr-r{right:12px}
+
+/* GALLERY MINI-CAROUSEL */
+.gallery-item{cursor:pointer;opacity:0;animation:fadeIn .6s ease forwards;position:relative}
+.gallery-carousel{position:relative;width:100%;aspect-ratio:1;overflow:hidden}
+.gallery-track{display:flex;height:100%;transition:transform .4s cubic-bezier(.25,.1,.25,1)}
+.gallery-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.gallery-slide img{max-width:90%;max-height:90%;object-fit:contain}
+.gallery-slide img.hat-img{transform:scale(.55)}
+.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;border:1px solid #1a1a1a;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .2s;z-index:2;font-size:12px;color:#1a1a1a;background:#fbfbfb}
+.gallery-item:hover .gallery-arrow{opacity:1}
+.gallery-arrow:hover{opacity:.7!important}
+.gallery-arrow.ga-l{left:8px}
+.gallery-arrow.ga-r{right:8px}
+.gallery-dots-mini{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:5px}
+.gallery-dot-mini{width:4px;height:4px;background:#1a1a1a;opacity:.12;border-radius:50%;transition:opacity .2s}
+.gallery-dot-mini.active{opacity:.5}
+
+/* PRODUCT INFO */
+.product-info{display:flex;flex-direction:column;justify-content:center;padding:20px 0;grid-column:2}
+.p-back{font-size:15px;letter-spacing:.08em;opacity:.25;margin-bottom:24px;display:block;width:fit-content;grid-column:2;transition:opacity .2s;cursor:pointer;padding:8px 0}
+.p-back:hover{opacity:1}
+.p-name{font-size:15px;letter-spacing:0;margin-bottom:6px;line-height:1.4}
+.p-subtitle{font-size:15px;letter-spacing:.08em;opacity:.35;margin-bottom:20px}
+.p-price{font-size:15px;letter-spacing:0;margin-bottom:44px}
+
+/* SPECS */
+.specs{margin-bottom:40px;border-top:1px solid rgba(0,0,0,.06)}
+.spec{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.spec-icon{width:24px;height:24px;flex-shrink:0;opacity:.3}
+.spec-icon svg{width:100%;height:100%}
+.spec-text{font-size:15px;letter-spacing:.02em;line-height:1.4}
+
+/* SIZE SELECTOR */
+.size-section{margin-bottom:32px}
+.size-label{font-size:15px;letter-spacing:.08em;opacity:.35;margin-bottom:12px}
+.size-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px}
+.size-btn{
+  width:100%;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(0,0,0,.12);background:transparent;
+  font:inherit;text-transform:uppercase;font-size:15px;letter-spacing:0;
+  cursor:pointer;transition:all .15s;
+}
+.size-btn:hover{border-color:#1a1a1a}
+.size-btn.active{background:#1a1a1a;color:#fbfbfb;border-color:#1a1a1a}
+.size-btn.disabled{opacity:.2;cursor:not-allowed}
+
+/* QUANTITY */
+.qty-section{display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.qty-ctrl{display:flex;align-items:center}
+.qty-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.12);background:transparent;font:inherit;font-size:15px;letter-spacing:0;cursor:pointer;transition:all .15s;user-select:none}
+.qty-btn:hover{border-color:#1a1a1a}
+.qty-btn:active{transform:scale(.95)}
+.qty-val{width:48px;height:40px;display:flex;align-items:center;justify-content:center;border-top:1px solid rgba(0,0,0,.12);border-bottom:1px solid rgba(0,0,0,.12);font:inherit;font-size:15px;letter-spacing:0}
+
+/* ADD TO BAG */
+.add-btn{
+  width:100%;background:#1a1a1a;color:#fbfbfb;border:none;
+  font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;
+  padding:18px 0;cursor:pointer;transition:all .2s;
+}
+.add-btn:hover{background:#333}
+.add-btn:active{transform:scale(.98)}
+.add-btn.added{background:#fbfbfb;color:#1a1a1a;border:1px solid #1a1a1a}
+.add-btn:disabled{opacity:.2;cursor:not-allowed}
+.size-hint{font-size:15px;letter-spacing:.05em;opacity:.25;text-align:center;margin-top:12px}
+
+/* ── CART DRAWER ── */
+.cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.cart-overlay.open{opacity:1;pointer-events:auto}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:#fbfbfb;z-index:201;transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.1,.25,1);display:flex;flex-direction:column}
+.cart-drawer.open{transform:translateX(0)}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-title{font-size:15px;letter-spacing:.08em}
+.cart-close{cursor:pointer;opacity:.3;transition:opacity .2s;background:none;border:none;font-size:28px;line-height:1;padding:8px}
+.cart-close:hover{opacity:1}
+.cart-items{flex:1;overflow-y:auto}
+.cart-item{display:flex;gap:20px;padding:24px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-item-img{width:72px;height:72px;object-fit:contain;flex-shrink:0}
+.cart-item-info{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cart-item-name{font-size:15px;letter-spacing:0;margin-bottom:2px}
+.cart-item-size{font-size:15px;letter-spacing:.05em;opacity:.35;margin-bottom:4px}
+.cart-item-price{font-size:15px;letter-spacing:0;opacity:.5}
+.cart-item-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.cart-item-actions .qty-ctrl{display:flex;align-items:center}
+.cart-item-actions .qty-btn{width:28px;height:28px;font-size:13px}
+.cart-item-actions .qty-val{width:32px;height:28px;font-size:13px}
+.cart-item-remove{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid rgba(0,0,0,.12);cursor:pointer;opacity:.25;transition:opacity .2s}
+.cart-item-remove:hover{opacity:1}
+.cart-item-remove svg{width:14px;height:14px}
+.cart-empty{flex:1;display:flex;align-items:start;justify-content:center;padding-top:40px;font-size:13px;letter-spacing:.05em;opacity:.2}
+.cart-footer{padding:24px 16px 40px;border-top:1px solid rgba(0,0,0,.06)}
+.cart-total{display:flex;justify-content:space-between;font-size:15px;letter-spacing:.02em;margin-bottom:24px}
+.checkout-btn{width:100%;background:#1a1a1a;color:#fbfbfb;border:none;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;cursor:pointer;transition:all .2s}
+.checkout-btn:hover{background:#333}
+.checkout-btn:active{transform:scale(.98)}
+.checkout-btn:disabled{opacity:.3;cursor:not-allowed}
+
+.loading{text-align:center;padding:200px 40px;font-size:15px;letter-spacing:0;opacity:.2;grid-column:1/-1}
+/* SEAL */
+.seal-wrap{
+  display:flex;justify-content:center;
+  padding:120px 40px 0;
+}
+.seal{width:160px;height:160px}
+.seal-text{
+  font:500 8px/1 'GT Pressura Mono',monospace;
+  fill:#1a1a1a;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+}
+@keyframes sealMorph{
+  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
+  25%{rx:0;ry:0;transform:rotate(90deg)}
+  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
+  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
+}
+.seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
+
+footer{text-align:center;padding:60px 40px;font-size:15px;letter-spacing:0;opacity:.2;color:#1a1a1a}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#f0fdf4;border:1px solid #166534;
+  padding:16px 24px;
+  display:flex;align-items:center;gap:16px;
+  z-index:300;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease,transform .3s ease;
+  font:500 15px/1.5 'GT Pressura Mono',monospace;
+  text-transform:uppercase;letter-spacing:0;
+  color:#166534;
+  max-width:90vw;
+}
+.toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.toast-msg{white-space:nowrap}
+.toast-btn{
+  background:#166534;color:#f0fdf4;border:none;
+  font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.05em;
+  padding:8px 16px;cursor:pointer;transition:opacity .2s;white-space:nowrap;
+}
+.toast-btn:hover{opacity:.8}
+.toast-close{background:none;border:none;color:#166534;font-size:20px;line-height:1;cursor:pointer;padding:0 0 0 8px;opacity:.5;transition:opacity .2s}
+.toast-close:hover{opacity:1}
+
+@media(max-width:768px){
+  nav{padding:20px 20px 0}
+  .gallery{padding:80px 20px 80px;gap:30px;grid-template-columns:1fr 1fr}
+  .p-back{grid-column:1;text-align:center;width:auto}
+  .carousel{grid-column:1;grid-row:auto}
+  .product-info{grid-column:1}
+  .product-section{grid-template-columns:1fr;gap:40px;padding:130px 20px 60px}
+  .cart-drawer{width:100vw}
+  footer{padding:80px 20px 40px}
+}
+@media(max-width:480px){.gallery{grid-template-columns:1fr}.hat-item .gallery-name{margin-top:-60px}.hat-item .gallery-dots-mini{bottom:auto;top:calc(100% - 80px)}}
+
+</style>
+</head>
+<body>
+<div class="prxy-loader" id="prxyLoader"><div class="prxy-loader-dot"></div></div>
+
+<nav>
+  <div class="nav-top">
+    <a href="/" class="logo">PRXY<span class="cursor"></span></a>
+    <div class="nav-acts">
+      <a href="#" class="nav-cart" id="cartToggle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-badge" id="cartCount">0</span>
+      </a>
+      <div class="nav-lang-wrap">
+        <a href="#" class="lang-btn" id="langEN">EN</a>
+        <a href="#" class="lang-btn" id="langES">ES</a>
+      </div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="/manifesto" class="nav-r" data-es="VISIÓN">VISION</a>
+    <a href="/process" class="nav-r" data-es="PROCESO">PROCESS</a>
+    <a href="/services" class="nav-r" data-es="SERVICIOS">SERVICES</a>
+    <a href="/shop" class="nav-r active" data-es="TIENDA">SHOP</a>
+  </div>
+</nav>
+
+<div class="serial">SHOP-001 / REV.A</div>
+
+<div id="galleryView" class="gallery">
+  <div class="loading" data-es="CARGANDO...">LOADING...</div>
+</div>
+
+<div id="detailView" class="detail"></div>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title" data-es="TU CESTA">YOUR BAG</div>
+    <button class="cart-close" id="cartClose">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty" id="cartEmpty" data-es="VACÍA">EMPTY</div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span data-es="TOTAL">TOTAL</span>
+      <span id="cartTotal">€0</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" data-es="CHECKOUT">CHECKOUT</button>
+  </div>
+</div>
+
+
+<div class="toast" id="toast">
+  <span class="toast-msg" id="toastMsg">ADDED</span>
+  <button class="toast-btn" id="toastBtn">VIEW BAG</button>
+  <button class="toast-close" id="toastClose">&times;</button>
+</div>
+<!-- SEAL -->
+<div class="seal-wrap">
+<svg class="seal" viewBox="-24 -24 248 248" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="arcTR" d="M 100,-18 A 118,118 0 0,1 218,100" fill="none"/>
+<path id="arcBL" d="M 100,218 A 118,118 0 0,1 -18,100" fill="none"/>
+</defs>
+<circle cx="100" cy="100" r="96" stroke="#1a1a1a" stroke-width=".9"/>
+<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#1a1a1a" stroke-width=".7"/>
+<line x1="4" y1="100" x2="196" y2="100" stroke="#1a1a1a" stroke-width=".7"/>
+<line x1="100" y1="4" x2="100" y2="196" stroke="#1a1a1a" stroke-width=".7"/>
+<rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
+<text class="seal-text" dominant-baseline="central"><textPath href="#arcTR" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<text class="seal-text" dominant-baseline="central"><textPath href="#arcBL" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<path d="M -14,69.5 A 118,118 0 0,1 69.5,-14" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
+<path d="M 214,130.5 A 118,118 0 0,1 130.5,214" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
+</svg>
+</div>
+
+<footer>PRXY<br><span id="yr"></span></footer>
+
+<script>
+(function(){
+
+
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  var WORKER_URL='https://prxy-shop.prxystudio.workers.dev';
+  var cart=JSON.parse(localStorage.getItem('prxy-cart')||'[]');
+  var lang=localStorage.getItem('prxy-lang')||'en';
+
+  // ── ICONS (line-art SVG, 24px, stroke only) ──
+  var I={
+    fabric:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 20C3 20 7 6 12 6C17 6 21 20 21 20"/><path d="M6 15C6 15 9 9 12 9C15 9 18 15 18 15"/></svg>',
+    weight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="14" r="6"/><path d="M9 8L12 4L15 8"/></svg>',
+    panel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
+    ruler:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="8" width="20" height="8" rx="1"/><line x1="6" y1="8" x2="6" y2="12"/><line x1="10" y1="8" x2="10" y2="14"/><line x1="14" y1="8" x2="14" y2="12"/><line x1="18" y1="8" x2="18" y2="14"/></svg>',
+    buckle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="7" y="4" width="10" height="16" rx="5"/><line x1="7" y1="12" x2="17" y2="12"/><circle cx="12" cy="12" r="1.5"/></svg>',
+    needle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L12 18"/><path d="M9 15L12 22L15 15"/><circle cx="12" cy="5" r="1"/></svg>',
+    wash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 10C3 6 7 4 12 4C17 4 21 6 21 10V19H3V10Z"/><path d="M7 14Q10 11 12 14Q14 17 17 14"/></svg>',
+    cuff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="4" y="6" width="16" height="12" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="4" y1="14" x2="20" y2="14"/></svg>',
+    fit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M8 2V6L4 8V18L8 20V22"/><path d="M16 2V6L20 8V18L16 20V22"/></svg>'
+  };
+
+  // ── PRODUCT DATA (local images + specs) ──
+  var PRODUCTS={
+    '425885327':{
+      name:{en:'DESIGN YOURSELF — BLACK CAP',es:'DESIGN YOURSELF — BLACK CAP'},
+      subtitle:{en:'EMBROIDERED DAD CAP',es:'GORRA DAD BORDADA'},
+      price:'49.00',currency:'EUR',
+      images:['/shop/hat-1-front.png','/shop/hat-2-right-front.png','/shop/hat-3-right-side.png','/shop/hat-4-right-back.png','/shop/hat-5-left.png','/shop/hat-6-left-front.png'],
+      sizes:['ONE SIZE'],
+      specs:[
+        {icon:'fabric',text:{en:'100% CHINO COTTON TWILL',es:'100% SARGA DE ALGODÓN CHINO'}},
+        {icon:'panel',text:{en:'UNSTRUCTURED, 6-PANEL, LOW-PROFILE',es:'DESESTRUCTURADA, 6 PANELES, PERFIL BAJO'}},
+        {icon:'ruler',text:{en:'CROWN HEIGHT 7.6 CM',es:'ALTURA CORONA 7.6 CM'}},
+        {icon:'buckle',text:{en:'ADJUSTABLE STRAP WITH ANTIQUE BUCKLE',es:'CORREA AJUSTABLE CON HEBILLA VINTAGE'}},
+        {icon:'needle',text:{en:'FLAT EMBROIDERY — WHITE THREAD',es:'BORDADO PLANO — HILO BLANCO'}},
+        {icon:'wash',text:{en:'MACHINE WASH COLD — AIR DRY',es:'LAVAR EN FRÍO — SECAR AL AIRE'}}
+      ]
+    },
+    '425894120':{
+      name:{en:'DESIGN YOURSELF — LONG SLEEVE BLACK',es:'DESIGN YOURSELF — LONG SLEEVE BLACK'},
+      subtitle:{en:'HEAVYWEIGHT EMBROIDERED',es:'HEAVYWEIGHT BORDADA'},
+      price:'65.00',currency:'EUR',
+      images:['/shop/ls-black-front.png','/shop/ls-black-right.png','/shop/ls-black-right-v2.png','/shop/ls-black-back.png','/shop/ls-black-left.png'],
+      sizes:['S','M','L','XL','2XL','3XL'],
+      specs:[
+        {icon:'fabric',text:{en:'100% CARDED COTTON — 278 G/M²',es:'100% ALGODÓN CARDADO — 278 G/M²'}},
+        {icon:'weight',text:{en:'PREMIUM HEAVYWEIGHT CONSTRUCTION',es:'CONSTRUCCIÓN PREMIUM HEAVYWEIGHT'}},
+        {icon:'fit',text:{en:'RELAXED OVERSIZED FIT — IF UNSURE, SIZE DOWN',es:'FIT RELAJADO OVERSIZED — SI DUDAS, BAJA UNA TALLA'}},
+        {icon:'cuff',text:{en:'WIDE RIBBED CUFFS — DOUBLE-NEEDLE HEMS',es:'PUÑOS ANCHOS ACANALADOS — DOBLADILLO DOBLE AGUJA'}},
+        {icon:'needle',text:{en:'PRXY.STUDIO — CENTER CHEST EMBROIDERY — WHITE THREAD',es:'PRXY.STUDIO — BORDADO PECHO CENTRAL — HILO BLANCO'}},
+        {icon:'wash',text:{en:'MACHINE WASH COLD — TUMBLE DRY LOW',es:'LAVAR EN FRÍO — SECADORA BAJA'}}
+      ]
+    },
+    '425894165':{
+      name:{en:'DESIGN YOURSELF — LONG SLEEVE WHITE',es:'DESIGN YOURSELF — LONG SLEEVE WHITE'},
+      subtitle:{en:'HEAVYWEIGHT EMBROIDERED',es:'HEAVYWEIGHT BORDADA'},
+      price:'65.00',currency:'EUR',
+      images:['/shop/ls-white-front.png','/shop/ls-white-right.png','/shop/ls-white-right-v2.png','/shop/ls-white-back.png','/shop/ls-white-left.png'],
+      sizes:['S','M','L','XL','2XL','3XL'],
+      specs:[
+        {icon:'fabric',text:{en:'100% CARDED COTTON — 278 G/M²',es:'100% ALGODÓN CARDADO — 278 G/M²'}},
+        {icon:'weight',text:{en:'PREMIUM HEAVYWEIGHT CONSTRUCTION',es:'CONSTRUCCIÓN PREMIUM HEAVYWEIGHT'}},
+        {icon:'fit',text:{en:'RELAXED OVERSIZED FIT — IF UNSURE, SIZE DOWN',es:'FIT RELAJADO OVERSIZED — SI DUDAS, BAJA UNA TALLA'}},
+        {icon:'cuff',text:{en:'WIDE RIBBED CUFFS — DOUBLE-NEEDLE HEMS',es:'PUÑOS ANCHOS ACANALADOS — DOBLADILLO DOBLE AGUJA'}},
+        {icon:'needle',text:{en:'PRXY.STUDIO — CENTER CHEST EMBROIDERY — GREY THREAD',es:'PRXY.STUDIO — BORDADO PECHO CENTRAL — HILO GRIS'}},
+        {icon:'wash',text:{en:'MACHINE WASH COLD — TUMBLE DRY LOW',es:'LAVAR EN FRÍO — SECADORA BAJA'}}
+      ]
+    }
+  };
+
+  // Map Printful variant sizes to our size labels
+  var VARIANT_MAP={
+    '425894120':{'S':19213,'M':19214,'L':19215,'XL':19216,'2XL':19217,'3XL':19218},
+    '425894165':{'S':19249,'M':19250,'L':19251,'XL':19252,'2XL':19253,'3XL':19254}
+  };
+
+  // ── Language ──
+  function setLang(l){
+    lang=l;localStorage.setItem('prxy-lang',l);
+    document.querySelectorAll('[data-es]').forEach(function(el){
+      if(l==='es'){if(!el.getAttribute('data-en'))el.setAttribute('data-en',el.innerHTML);el.innerHTML=el.getAttribute('data-es')}
+      else{if(el.getAttribute('data-en'))el.innerHTML=el.getAttribute('data-en')}
+    });
+    var en=document.getElementById('langEN'),es=document.getElementById('langES');
+    if(en)en.classList.toggle('on',l==='en');
+    if(es)es.classList.toggle('on',l==='es');
+    document.documentElement.lang=l;
+    renderGallery();
+    updateCartUI();
+    route();
+  }
+  if(lang==='es')setLang('es');
+  document.getElementById('langEN').addEventListener('click',function(e){e.preventDefault();setLang('en')});
+  document.getElementById('langES').addEventListener('click',function(e){e.preventDefault();setLang('es')});
+  // Init lang buttons
+  (function(){var en=document.getElementById('langEN'),es=document.getElementById('langES');if(en)en.classList.toggle('on',lang==='en');if(es)es.classList.toggle('on',lang==='es')}());
+
+  // ── Cart ──
+  function updateCartUI(){
+    var count=document.getElementById('cartCount');
+    var items=document.getElementById('cartItems');
+    var footer=document.getElementById('cartFooter');
+    var total=document.getElementById('cartTotal');
+    var totalQty=0;
+    cart.forEach(function(c){totalQty+=(c.qty||1)});
+    count.textContent=totalQty;
+    count.classList.toggle('show',totalQty>0);
+    // Sync to localStorage for other pages
+    localStorage.setItem('prxy-cart',JSON.stringify(cart));
+    footer.style.display=cart.length>0?'block':'none';
+    var html='',sum=0;
+    cart.forEach(function(item,i){
+      var q=item.qty||1;
+      sum+=parseFloat(item.price)*q;
+      html+='<div class="cart-item">'+
+        '<img class="cart-item-img" src="'+item.img+'" alt="'+item.name+'">'+
+        '<div class="cart-item-info">'+
+          '<div class="cart-item-name">'+item.name+'</div>'+
+          '<div class="cart-item-size">'+item.size+'</div>'+
+          '<div class="cart-item-price">€'+(parseFloat(item.price)*q).toFixed(2)+'</div>'+
+          '<div class="cart-item-actions">'+
+            '<div class="qty-ctrl">'+
+              '<button class="qty-btn cart-qty-minus" data-idx="'+i+'">−</button>'+
+              '<div class="qty-val">'+q+'</div>'+
+              '<button class="qty-btn cart-qty-plus" data-idx="'+i+'">+</button>'+
+            '</div>'+
+            '<button class="cart-item-remove" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>'+
+          '</div>'+
+        '</div></div>';
+    });
+    html+='<div class="cart-empty" style="display:'+(cart.length?'none':'flex')+'">'+(lang==='es'?'VACÍA':'EMPTY')+'</div>';
+    items.innerHTML=html;
+    total.textContent='€'+sum.toFixed(2);
+    items.querySelectorAll('.cart-qty-minus').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var idx=parseInt(this.getAttribute('data-idx'));
+        if(cart[idx].qty>1){cart[idx].qty--}else{cart.splice(idx,1)}
+        updateCartUI();
+      });
+    });
+    items.querySelectorAll('.cart-qty-plus').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var idx=parseInt(this.getAttribute('data-idx'));
+        if((cart[idx].qty||1)<10){cart[idx].qty=(cart[idx].qty||1)+1;updateCartUI()}
+      });
+    });
+    items.querySelectorAll('.cart-item-remove').forEach(function(btn){
+      btn.addEventListener('click',function(){cart.splice(parseInt(this.getAttribute('data-idx')),1);updateCartUI()});
+    });
+  }
+  function openCart(){document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartDrawer').classList.add('open');document.body.style.overflow='hidden'}
+  function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow=''}
+  document.getElementById('cartToggle').addEventListener('click',function(e){e.preventDefault();openCart()});
+  document.getElementById('cartOverlay').addEventListener('click',closeCart);
+  document.getElementById('cartClose').addEventListener('click',closeCart);
+  document.getElementById('checkoutBtn').addEventListener('click',function(){
+    if(!cart.length)return;
+    var btn=this;btn.textContent='...';btn.disabled=true;
+    var items=cart.map(function(item){
+      var o={product_id:item.productId.toString(),quantity:item.qty||1};
+      if(item.variantId)o.variant_id=item.variantId;
+      return o;
+    });
+    var body={items:items};
+    fetch(WORKER_URL+'/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.url)window.location.href=d.url;else{btn.textContent='CHECKOUT';btn.disabled=false}})
+    .catch(function(){btn.textContent='CHECKOUT';btn.disabled=false});
+  });
+
+  // ── Carousel ──
+  function initCarousel(el){
+    var track=el.querySelector('.carousel-track'),dots=el.querySelectorAll('.carousel-dot'),slides=el.querySelectorAll('.carousel-slide');
+    var cur=0,tot=slides.length,sx=0,dx=0,drag=false;
+    function go(i){cur=Math.max(0,Math.min(i,tot-1));track.style.transform='translateX(-'+cur*100+'%)';dots.forEach(function(d,j){d.classList.toggle('active',j===cur)})}
+    el.querySelector('.carousel-prev').addEventListener('click',function(){go(cur-1)});
+    el.querySelector('.carousel-next').addEventListener('click',function(){go(cur+1)});
+    var arrL=el.querySelector('.arr-l'),arrR=el.querySelector('.arr-r');
+    if(arrL)arrL.addEventListener('click',function(e){e.stopPropagation();go(cur-1)});
+    if(arrR)arrR.addEventListener('click',function(e){e.stopPropagation();go(cur+1)});
+    dots.forEach(function(d,j){d.addEventListener('click',function(){go(j)})});
+    el.addEventListener('mousedown',function(e){sx=e.clientX;drag=true});
+    el.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;drag=true},{passive:true});
+    el.addEventListener('mousemove',function(e){if(drag)dx=e.clientX-sx});
+    el.addEventListener('touchmove',function(e){if(drag)dx=e.touches[0].clientX-sx},{passive:true});
+    function end(){if(!drag)return;drag=false;if(dx>50)go(cur-1);else if(dx<-50)go(cur+1);dx=0}
+    el.addEventListener('mouseup',end);el.addEventListener('mouseleave',end);el.addEventListener('touchend',end);
+    go(0);
+  }
+
+  // ── Router ──
+  function route(){
+    var h=location.hash,gv=document.getElementById('galleryView'),dv=document.getElementById('detailView');
+    if(h.startsWith('#product/')){
+      var pid=h.split('/')[1];
+      gv.style.display='none';dv.className='detail active';
+      renderDetail(pid);
+    }else{
+      gv.style.display='';dv.className='detail';dv.innerHTML='';
+    }
+  }
+
+  // ── Gallery ──
+  function renderGallery(){
+    var grid=document.getElementById('galleryView');
+    grid.innerHTML='';
+    var ids=Object.keys(PRODUCTS);
+    ids.forEach(function(pid,i){
+      var p=PRODUCTS[pid];
+      var item=document.createElement('div');
+      item.className='gallery-item';
+      item.style.animationDelay=(0.1+i*0.12)+'s';
+      var isHat=pid==='425885327';
+      if(isHat)item.classList.add('hat-item');
+      var slides='',dots='';
+      p.images.forEach(function(img,j){
+        slides+='<div class="gallery-slide"><img src="'+img+'"'+(isHat?' class="hat-img"':'')+' alt="'+(typeof p.name==="object"?p.name[lang]:p.name)+'"></div>';
+        dots+='<div class="gallery-dot-mini'+(j===0?' active':'')+'"></div>';
+      });
+      item.innerHTML='<div class="gallery-carousel" data-pid="'+pid+'">'+
+        '<div class="gallery-track">'+slides+'</div>'+
+        '<div class="gallery-arrow ga-l">&#8592;</div>'+
+        '<div class="gallery-arrow ga-r">&#8594;</div>'+
+        '<div class="gallery-dots-mini">'+dots+'</div>'+
+        '</div>'+
+        '<div class="gallery-name">'+(typeof p.name==='object'?p.name[lang]:p.name)+'</div>'+
+        '<div class="gallery-price">€'+p.price+'</div>';
+      item.querySelector('.gallery-name').addEventListener('click',function(){location.hash='product/'+pid});
+      item.querySelector('.gallery-price').addEventListener('click',function(){location.hash='product/'+pid});
+      // Mini carousel logic
+      (function(el,total){
+        var cur=0,sx=0,dx=0,drag=false,moved=false;
+        var track=el.querySelector('.gallery-track');
+        var mdots=el.querySelectorAll('.gallery-dot-mini');
+        function go(n){cur=Math.max(0,Math.min(n,total-1));track.style.transition='transform .35s cubic-bezier(.25,.1,.25,1)';track.style.transform='translateX(-'+cur*100+'%)';mdots.forEach(function(d,k){d.classList.toggle('active',k===cur)})}
+        el.querySelector('.ga-l').addEventListener('click',function(e){e.stopPropagation();go(cur-1)});
+        el.querySelector('.ga-r').addEventListener('click',function(e){e.stopPropagation();go(cur+1)});
+        el.addEventListener('mousedown',function(e){sx=e.clientX;dx=0;drag=true;moved=false;track.style.transition='none'});
+        el.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;dx=0;drag=true;moved=false;track.style.transition='none'},{passive:true});
+        el.addEventListener('mousemove',function(e){if(!drag)return;dx=e.clientX-sx;if(Math.abs(dx)>5)moved=true;var pct=-cur*100+dx/el.offsetWidth*100;track.style.transform='translateX('+pct+'%)'});
+        el.addEventListener('touchmove',function(e){if(!drag)return;dx=e.touches[0].clientX-sx;if(Math.abs(dx)>5)moved=true;var pct=-cur*100+dx/el.offsetWidth*100;track.style.transform='translateX('+pct+'%)'},{passive:true});
+        function end(){if(!drag)return;drag=false;if(dx>40)go(cur-1);else if(dx<-40)go(cur+1);else go(cur);dx=0}
+        el.addEventListener('mouseup',end);el.addEventListener('mouseleave',end);el.addEventListener('touchend',end);
+        el.addEventListener('click',function(e){if(moved||e.target.closest('.gallery-arrow'))return;location.hash='product/'+el.getAttribute('data-pid')});
+      })(item.querySelector('.gallery-carousel'),p.images.length);
+      grid.appendChild(item);
+    });
+  }
+
+  // ── Detail ──
+  function renderDetail(pid){
+    var p=PRODUCTS[pid];
+    if(!p){document.getElementById('detailView').innerHTML='<div class="loading">NOT FOUND</div>';return}
+
+    var slides='',dots='';
+    var hc=pid==='425885327'?' class="hat-carousel"':'';
+    p.images.forEach(function(img,i){
+      slides+='<div class="carousel-slide"><img src="'+img+'"'+hc+' alt="'+(typeof p.name==="object"?p.name[lang]:p.name)+'" draggable="false"></div>';
+      dots+='<div class="carousel-dot'+(i===0?' active':'')+'"></div>';
+    });
+
+    var specs='';
+    p.specs.forEach(function(s){
+      specs+='<div class="spec"><div class="spec-icon">'+I[s.icon]+'</div><div class="spec-text">'+s.text[lang]+'</div></div>';
+    });
+
+    var sizes='';
+    p.sizes.forEach(function(s,i){
+      var cls=i===0&&p.sizes.length===1?'size-btn active':'size-btn';
+      sizes+='<button class="'+cls+'" data-size="'+s+'">'+s+'</button>';
+    });
+
+    var sub=typeof p.subtitle==='object'?p.subtitle[lang]:p.subtitle;
+
+    document.getElementById('detailView').innerHTML=
+      '<div class="product-section">'+
+        '<a href="#" class="p-back">'+(lang==='es'?'← TODOS LOS PRODUCTOS':'← ALL PRODUCTS')+'</a>'+
+        '<div class="carousel" id="carousel">'+
+          '<div class="carousel-track">'+slides+'</div>'+
+          '<div class="carousel-dots">'+dots+'</div>'+
+          '<div class="carousel-nav"><div class="carousel-prev"></div><div class="carousel-next"></div></div>'+
+          '<div class="carousel-arrow arr-l" id="arrL">&#8592;</div><div class="carousel-arrow arr-r" id="arrR">&#8594;</div>'+
+        '</div>'+
+        '<div class="product-info">'+
+          '<div class="p-name">'+(typeof p.name==='object'?p.name[lang]:p.name)+'</div>'+
+          '<div class="p-subtitle">'+sub+'</div>'+
+          '<div class="p-price">€'+p.price+'</div>'+
+          '<div class="specs">'+specs+'</div>'+
+          (p.sizes.length>1?'<div class="size-section">'+
+            '<div class="size-label">'+(lang==='es'?'TALLA':'SIZE')+'</div>'+
+            '<div class="size-grid">'+sizes+'</div>'+
+          '</div>':'')+
+          '<div class="qty-section">'+
+            '<div class="qty-ctrl">'+
+              '<button class="qty-btn" id="qtyMinus">−</button>'+
+              '<div class="qty-val" id="qtyVal">1</div>'+
+              '<button class="qty-btn" id="qtyPlus">+</button>'+
+            '</div>'+
+          '</div>'+
+          '<button class="add-btn" id="addBtn" disabled>'+(lang==='es'?'SELECCIONA TALLA':'SELECT SIZE')+'</button>'+
+        '</div>'+
+      '</div>';
+
+    initCarousel(document.getElementById('carousel'));
+
+    var selectedSize=p.sizes.length===1?p.sizes[0]:null;
+    var qty=1;
+    var addBtn=document.getElementById('addBtn');
+    var qtyVal=document.getElementById('qtyVal');
+    var qtyMinus=document.getElementById('qtyMinus');
+    var qtyPlus=document.getElementById('qtyPlus');
+
+    qtyMinus.addEventListener('click',function(){if(qty>1){qty--;qtyVal.textContent=qty}});
+    qtyPlus.addEventListener('click',function(){if(qty<10){qty++;qtyVal.textContent=qty}});
+
+    if(p.sizes.length===1){
+      addBtn.disabled=false;
+      addBtn.textContent=lang==='es'?'AÑADIR A LA CESTA':'ADD TO BAG';
+    }
+
+    document.querySelectorAll('.size-btn').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        document.querySelectorAll('.size-btn').forEach(function(b){b.classList.remove('active')});
+        this.classList.add('active');
+        selectedSize=this.getAttribute('data-size');
+        addBtn.disabled=false;
+        addBtn.textContent=lang==='es'?'AÑADIR A LA CESTA':'ADD TO BAG';
+        addBtn.classList.remove('added');
+      });
+    });
+
+    addBtn.addEventListener('click',function(){
+      if(!selectedSize)return;
+      var variantId=null;
+      if(VARIANT_MAP[pid]&&VARIANT_MAP[pid][selectedSize]){
+        variantId=VARIANT_MAP[pid][selectedSize];
+      }
+      // If already in cart with same size, increment quantity
+      var existing=null;
+      for(var ci=0;ci<cart.length;ci++){if(cart[ci].productId==pid&&cart[ci].size===selectedSize){existing=cart[ci];break}}
+      if(existing){
+        existing.qty=(existing.qty||1)+qty;
+        if(existing.qty>10)existing.qty=10;
+      }else{
+        cart.push({productId:pid,variantId:variantId,name:(typeof p.name==='object'?p.name[lang]:p.name),size:selectedSize,price:p.price,img:p.images[0],qty:qty});
+      }
+      updateCartUI();
+      addBtn.classList.add('added');
+      addBtn.textContent=lang==='es'?'AÑADIDO':'ADDED';
+      showToast(lang==='es'?'AÑADIDO A LA CESTA':'ADDED TO BAG');
+    });
+
+    window.scrollTo(0,0);
+  }
+
+
+  // ── Toast ──
+  var toastTimer=null;
+  function showToast(msg){
+    var t=document.getElementById('toast');
+    var m=document.getElementById('toastMsg');
+    var b=document.getElementById('toastBtn');
+    m.textContent=msg;
+    b.textContent=lang==='es'?'VER CESTA':'VIEW BAG';
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.classList.remove('show')},4000);
+  }
+  document.getElementById('toastBtn').addEventListener('click',function(){
+    document.getElementById('toast').classList.remove('show');
+    clearTimeout(toastTimer);
+    openCart();
+  });
+  document.getElementById('toastClose').addEventListener('click',function(){
+    document.getElementById('toast').classList.remove('show');
+    clearTimeout(toastTimer);
+  });
+
+  renderGallery();
+  updateCartUI();
+  route();
+  window.addEventListener('hashchange',route);
+
+  // Auto-open cart if linked with #bag
+  if(location.hash==='#bag'){location.hash='';openCart()}
+  setTimeout(function(){var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}},800)
+})();
+</script>
+</body>
+</html>

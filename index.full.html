@@ -47,8 +47,8 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:10;
   display:flex;justify-content:space-between;align-items:center;
   padding:40px;
-  background:rgba(251,251,251,.9);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(251,251,251,.5);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
 }
 .logo{letter-spacing:0;font-size:14px}
 .cursor{
@@ -183,10 +183,10 @@ section{text-align:center}
 /* SERIAL — TE detail */
 .serial{
   position:fixed;
-  bottom:32px;right:40px;
-  font-size:9px;
+  bottom:32px;right:2px;
+  font-size:8px;
   letter-spacing:.1em;
-  opacity:.08;
+  opacity:.25;
   z-index:5;
   writing-mode:vertical-rl;
 }
@@ -197,6 +197,19 @@ section{text-align:center}
   padding:120px 40px 0;
 }
 .seal{width:160px;height:160px}
+.seal-text{
+  font:500 8px/1 'GT Pressura Mono',monospace;
+  fill:#1a1a1a;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+}
+@keyframes sealMorph{
+  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
+  25%{rx:0;ry:0;transform:rotate(90deg)}
+  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
+  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
+}
+.seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
 
 /* FOOTER */
 footer{
@@ -406,22 +419,25 @@ footer{
 
 <!-- SEAL -->
 <div class="seal-wrap">
-<svg class="seal" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-<!-- outer circle -->
-<circle cx="100" cy="100" r="96" stroke="#2a2a2a" stroke-width=".4"/>
-<!-- longitude ellipses -->
-<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
-<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
-<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- latitude ellipses -->
-<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#2a2a2a" stroke-width=".3"/>
-<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#2a2a2a" stroke-width=".3"/>
-<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- axes -->
-<line x1="4" y1="100" x2="196" y2="100" stroke="#2a2a2a" stroke-width=".3"/>
-<line x1="100" y1="4" x2="100" y2="196" stroke="#2a2a2a" stroke-width=".3"/>
-<!-- center dot -->
+<svg class="seal" viewBox="-24 -24 248 248" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="arcTR" d="M 100,-18 A 118,118 0 0,1 218,100" fill="none"/>
+<path id="arcBL" d="M 100,218 A 118,118 0 0,1 -18,100" fill="none"/>
+</defs>
+<circle cx="100" cy="100" r="96" stroke="#1a1a1a" stroke-width=".9"/>
+<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#1a1a1a" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#1a1a1a" stroke-width=".7"/>
+<line x1="4" y1="100" x2="196" y2="100" stroke="#1a1a1a" stroke-width=".7"/>
+<line x1="100" y1="4" x2="100" y2="196" stroke="#1a1a1a" stroke-width=".7"/>
 <rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
+<text class="seal-text" dominant-baseline="central"><textPath href="#arcTR" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<text class="seal-text" dominant-baseline="central"><textPath href="#arcBL" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<path d="M -14,69.5 A 118,118 0 0,1 69.5,-14" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
+<path d="M 214,130.5 A 118,118 0 0,1 130.5,214" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
 </svg>
 </div>
 

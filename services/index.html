@@ -88,8 +88,9 @@
   window.addEventListener('popstate',function(){spaNavigate(location.href,false)});
 })();
 </script>
-<title>VISION — PRXY.STUDIO</title>
+<title>SERVICES — PRXY.STUDIO</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 @font-face{font-family:'GT Pressura Mono';src:url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff2') format('woff2'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff') format('woff'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -106,19 +107,21 @@ body{
 
 ::selection{background:#1a1a1a;color:#fff}
 a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
-button,input{font:inherit;text-transform:uppercase;color:#1a1a1a}
+button,input,select,textarea{font:inherit;text-transform:uppercase;color:#1a1a1a}
+
+@keyframes sealMorph{
+  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
+  25%{rx:0;ry:0;transform:rotate(90deg)}
+  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
+  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
+}
+.seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
 
 @keyframes morph{
   0%,100%{border-radius:0;transform:rotate(0deg)}
   25%{border-radius:0;transform:rotate(90deg)}
   50%{border-radius:50%;transform:rotate(180deg) scale(.7)}
   75%{border-radius:50%;transform:rotate(270deg) scale(.7)}
-}
-@keyframes sealMorph{
-  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
-  25%{rx:0;ry:0;transform:rotate(90deg)}
-  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
-  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -140,7 +143,7 @@ nav{
   position:fixed;top:0;left:0;right:0;z-index:10;
   display:flex;flex-direction:column;
   padding:20px 40px 0;
-  background:rgba(251,251,251,.5);
+  background:rgba(251,251,251,0);
   backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
 }
 .nav-top{display:flex;justify-content:space-between;align-items:center;width:100%}
@@ -168,88 +171,75 @@ nav{
 .lang-btn:hover{opacity:.6}
 .lang-btn.on{opacity:1}
 
-/* LAYOUT */
-.cx{max-width:420px;margin:0 auto}
+.cx{max-width:520px;margin:0 auto}
 
-/* LANDING */
-#landing{flex-direction:column;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  padding:200px 40px 120px;
-  text-align:center;
+/* SECTIONS */
+section{
+  padding:120px 40px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .6s ease,transform .6s ease;
+  background-image:linear-gradient(rgba(0,0,0,.08),rgba(0,0,0,.08));
+  background-size:calc(100% - 32px) 1px;
+  background-position:center top;
+  background-repeat:no-repeat;
 }
+section.v{opacity:1;transform:none}
+section{text-align:center}
 
-.m{font-size:15px;line-height:1.7;letter-spacing:0;opacity:0;transform:translateY(4px);transition:opacity .4s ease,transform .4s ease}
-.m:empty{display:none}
-.m.v{opacity:1;transform:translateY(0)}
-.sp{height:24px}
-.dots{opacity:0;transition:opacity .6s ease}
-.dots.v{opacity:1}
-.dots{
-  text-align:center;
-  font-size:22px;
-  letter-spacing:.3em;
-}
+/* LABEL */
+.lb{font-size:11px;letter-spacing:.2em;opacity:.3;margin-bottom:24px}
 
-/* EMAIL FORM */
-.nl-box{
-  display:flex;flex-direction:column;align-items:center;
-  margin-top:80px;
-  border:1px solid rgba(0,0,0,.15);
-  padding:32px 16px 28px;
-  text-align:center;
-  opacity:0;
-  transform:translateY(4px);
-  transition:opacity .4s ease,transform .4s ease;
+/* BLOCKS */
+.bk{margin-bottom:60px}
+.bk:last-child{margin-bottom:0}
+.bk-t{letter-spacing:0;margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.ico{display:block;width:1.2em;height:1.2em;flex-shrink:0;color:#1a1a1a;opacity:.4}
+.bk-d{opacity:.4;line-height:1.4;letter-spacing:0}
+
+.foot-line{margin-top:80px;letter-spacing:0}
+
+/* DIAGNOSIS */
+.dx{margin-bottom:24px;letter-spacing:0;line-height:1.4}
+.dx-f{opacity:.2;margin-top:60px;letter-spacing:0}
+
+/* SERVICES */
+.sv{margin-bottom:60px}
+.sv:last-child{margin-bottom:0}
+.sv-n{opacity:.2;margin-bottom:12px;letter-spacing:0}
+.sv-t{letter-spacing:0;margin-bottom:4px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.sv-d{opacity:.4;line-height:1.4;letter-spacing:0;margin-bottom:8px}
+.sv-p{letter-spacing:0}
+
+/* FORM */
+#apply{text-align:center}
+.ap-h{letter-spacing:0;margin-bottom:16px}
+.ap-s{opacity:.2;letter-spacing:0;margin-bottom:80px;line-height:1.4}
+
+.fg{margin-bottom:40px}
+.fg select,.fg textarea,.fg input{
+  width:100%;background:transparent;
+  border:none;border-bottom:1px solid rgba(0,0,0,.15);
+  padding:16px 0;font-size:15px;letter-spacing:0;
+  outline:none;border-radius:0;
+  -webkit-appearance:none;appearance:none;
+  transition:border-color .2s;
 }
-.nl-box.v{opacity:1;transform:translateY(0);width:100%}.nl-box.v{opacity:1;transform:translateY(0)}
-.nl-label{
-  font-size:10px;
-  letter-spacing:.15em;
-  opacity:.3;
-}
-.email-wrap{width:80%;
-  margin-top:20px;
-}.email-field{
-  display:flex;
-  border-bottom:1px solid rgba(0,0,0,.15);
-  max-width:320px;
-  margin:0 auto;
-}
-.email-field input{
-  flex:1;
-  background:transparent;
-  border:none;
-  padding:14px 0;
-  font-size:15px;
-  letter-spacing:0;
-  outline:none;
-  text-align:center;
-}
+.fg select{cursor:pointer;color:rgba(0,0,0,.3)}
+.fg select.hv{color:#1a1a1a}
+.fg select option{background:#fff;color:#1a1a1a}
+.fg textarea{resize:none;height:160px;line-height:1.7}
+.fg select:focus,.fg textarea:focus,.fg input:focus{border-bottom-color:#1a1a1a}
 ::placeholder{color:rgba(0,0,0,.2);text-transform:uppercase}
-.email-field input:focus{border-color:#1a1a1a}
-.email-field button{
-  background:none;border:none;
-  padding:14px 0 14px 16px;
+
+.sub-btn{
+  background:#000;color:#fff;border:none;
   font-size:15px;letter-spacing:0;
-  cursor:pointer;opacity:.3;
+  padding:16px 60px;cursor:pointer;
   transition:opacity .2s;
 }
-.email-field button:hover{opacity:1}
-.email-ok{
-  display:none;
-  font-size:15px;
-  letter-spacing:0;
-  margin-top:24px;
-}
-.email-err{
-  display:none;
-  font-size:15px;
-  letter-spacing:0;
-  margin-top:24px;
-  color:#FF3F26;
-}
+.sub-btn:hover{opacity:.6}
+
+.ap-ok{display:none;letter-spacing:0}
 
 /* SERIAL */
 .serial{
@@ -283,31 +273,22 @@ nav{
 }
 .seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
 
-/* MANIFESTO CTA */
-.mf-btn{
-  display:inline-block;
-  background:#000;color:#fff;border:none;
-  font:inherit;text-transform:uppercase;
-  font-size:15px;letter-spacing:0;
-  padding:6px 16px;
-  border-radius:100px;
-  opacity:0;
-  transition:opacity .6s ease;
-}
-.mf-btn.v{opacity:1}
-.mf-btn:hover{opacity:.7}
 /* FOOTER */
 footer{
   text-align:center;padding:60px 40px 60px;
-  font-size:15px;letter-spacing:0;opacity:.25;color:#1a1a1a;
+  font-size:15px;letter-spacing:0;opacity:.15;text-transform:uppercase;
 }
 
 /* MOBILE */
 @media(max-width:768px){
   nav{padding:20px 20px 0}
-  #landing{flex-direction:column;padding:130px 20px 70px}
+  section{padding:80px 20px}
   .cx{max-width:100%}
-  .email-field{max-width:100%}
+  .lb,.bk,.sv,.dx,.dx-f,.ap-s,.ap-ok,.fg,.foot-line{text-align:center}
+  .bk-t,.sv-t{align-items:center}
+  #apply .lb,#apply .ap-h,#apply .ap-s{text-align:center}
+  .sub-btn{display:block;width:100%}
+  .serial{display:none}
   footer{padding:80px 20px 40px}
 }
 
@@ -331,116 +312,119 @@ footer{
     </div>
   </div>
   <div class="nav-links">
-    <a href="/manifesto" class="nav-r active" data-es="VISIÓN">VISION</a>
+    <a href="/manifesto" class="nav-r" data-es="VISIÓN">VISION</a>
     <a href="/process" class="nav-r" data-es="PROCESO">PROCESS</a>
-    <a href="/services" class="nav-r" data-es="SERVICIOS">SERVICES</a>
+    <a href="/services" class="nav-r active" data-es="SERVICIOS">SERVICES</a>
     <a href="/shop" class="nav-r" data-es="TIENDA">SHOP</a>
   </div>
 </nav>
 
 <div class="serial">PRXY-001 / REV.A</div>
 
-<!-- ══════ MANIFESTO ══════ -->
-<div id="landing">
+
+
+<section id="who" style="padding-top:130px">
 <div class="cx">
-<div class="m" data-es="SOMOS HIJOS DE UN MUNDO">WE'RE SONS OF A WORLD</div>
-<div class="m" data-es="QUE CRECIÓ DEMASIADO RÁPIDO.">THAT GREW UP TOO FAST.</div>
-<div class="sp"></div>
-<div class="m" data-es="UN SISTEMA QUE TE NECESITA OCUPADO.">A SYSTEM THAT NEEDS YOU BUSY.</div>
-<div class="m" data-es="NO FELIZ.">NOT HAPPY.</div>
-<div class="m" data-es="NO LIBRE.">NOT FREE.</div>
-<div class="m" data-es="NO VIVO.">NOT ALIVE.</div>
-<div class="m" data-es="OCUPADO.">BUSY.</div>
-<div class="sp"></div>
-<div class="m" data-es="ELLOS DISEÑARON EL SISTEMA.">THEY DESIGNED THE SYSTEM.</div>
-<div class="m" data-es="Y TÚ LO SEGUISTE.">AND YOU FOLLOWED IT.</div>
-<div class="sp"></div>
-<div class="m" data-es="AHORA QUIERES LO QUE TE VENDIERON.">NOW YOU WANT WHAT THEY SOLD YOU.</div>
-<div class="m" data-es="CREES LO QUE TE DIJERON.">YOU BELIEVE WHAT THEY TOLD YOU.</div>
-<div class="m" data-es="REPITES LO QUE TE ENSEÑARON.">YOU REPEAT WHAT THEY TAUGHT YOU.</div>
-<div class="sp"></div>
-<div class="m" data-es="Y SI INTENTAS SER DIFERENTE,">AND IF YOU TRY TO BE DIFFERENT,</div>
-<div class="m" data-es="TE DICEN QUE ESTÁ MAL.">THEY TELL YOU IT'S WRONG.</div>
-<div class="sp"></div>
-<div class="m" data-es="ELLOS DISEÑARON EL ESTÁNDAR.">THEY DESIGNED THE STANDARD.</div>
-<div class="m" data-es="LA CARA. EL CUERPO. LA CASA.">THE FACE. THE BODY. THE HOUSE.</div>
-<div class="m" data-es="LA VIDA QUE DEBES DESEAR.">THE LIFE YOU'RE SUPPOSED TO WANT.</div>
-<div class="m" data-es="LA PERSONA EN LA QUE DEBES CONVERTIRTE.">THE PERSON YOU'RE SUPPOSED TO BE.</div>
-<div class="sp"></div>
-<div class="m" data-es="¿Y TÚ?">AND YOU?</div>
-<div class="sp"></div>
-<div class="m" data-es="TÚ DIJISTE QUE SÍ.">YOU SAID YES.</div>
-<div class="sp"></div>
-<div class="dots">&#x2605;&#x2605;</div>
-<div class="sp"></div>
-<div class="m" data-es="HASTA HOY.">UNTIL TODAY.</div>
-<div class="sp"></div>
-<div class="m" data-es="YO DECIDO QUÉ CREER.">I DECIDE WHAT TO BELIEVE.</div>
-<div class="m" data-es="YO DECIDO QUÉ PENSAR.">I DECIDE WHAT TO THINK.</div>
-<div class="m" data-es="YO DECIDO QUÉ SENTIR.">I DECIDE WHAT TO FEEL.</div>
-<div class="sp"></div>
-<div class="m" data-es="Y DECIDO CREER">AND I DECIDE TO BELIEVE</div>
-<div class="m" data-es="EN NADA.">IN NOTHING.</div>
-<div class="sp"></div>
-<div class="m" data-es="NADA ME DEFINE.">NOTHING DEFINES ME.</div>
-<div class="m" data-es="NADA ME LIMITA.">NOTHING LIMITS ME.</div>
-<div class="m" data-es="NADA ME PARA.">NOTHING DEFEATS ME.</div>
-<div class="sp"></div>
-<div class="m" data-es="NO SOY UN NOMBRE.">I'M NOT A NAME.</div>
-<div class="m" data-es="NO SOY UNA ETIQUETA.">I'M NOT A LABEL.</div>
-<div class="m" data-es="NO SOY HUMANO.">I'M NOT HUMAN.</div>
-<div class="sp"></div>
-<div class="m" data-es="SOY UNA IDEA.">I'M AN IDEA.</div>
-<div class="m" data-es="ATEMPORAL.">TIMELESS.</div>
-<div class="sp"></div>
-<div class="m" data-es="TENGO UNA VISIÓN.">I HAVE A VISION.</div>
-<div class="m" data-es="LA DISEÑO.">I DESIGN IT.</div>
-<div class="m" data-es="ME CONVIERTO EN ELLA.">I BECOME IT.</div>
-<div class="m" data-es="CONSTRUYO.">I BUILD.</div>
-<div class="sp"></div>
-<div class="m" data-es="YO ELIJO LO QUE OCURRE.">I CHOOSE WHAT HAPPENS.</div>
-<div class="m" data-es="DISEÑO CÓMO VA A OCURRIR.">I DESIGN HOW IT HAPPENS.</div>
-<div class="m" data-es="VEO CÓMO TOMA FORMA.">I WATCH IT TAKE SHAPE.</div>
-<div class="m" data-es="Y LO REFINO CADA DÍA.">AND I REFINE IT EVERY DAY.</div>
-<div class="sp"></div>
-<div class="m" data-es="NO CUMPLO EXPECTATIVAS.">I DON'T MEET EXPECTATIONS.</div>
-<div class="m" data-es="LAS DISEÑO.">I DESIGN THEM.</div>
-<div class="sp"></div>
-<div class="m" data-es="NO SOY LO QUE CUENTAN DE MÍ.">I'M NOT WHAT THEY SAY ABOUT ME.</div>
-<div class="m" data-es="YO DISEÑO LA NARRATIVA.">I DESIGN THE NARRATIVE.</div>
-<div class="sp"></div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="sp"></div>
-<div class="m" data-es="TÚ DEFINES EL ESTÁNDAR.">YOU DEFINE THE STANDARD.</div>
-<div class="m" data-es="TÚ MOLDEAS LA REALIDAD.">YOU SHAPE REALITY.</div>
-<div class="sp"></div>
-<div class="dots">&#x2605;&#x2605;</div>
-<div class="sp"></div>
-<div class="m" data-es="AHORA, NOMBRA TODO LO QUE AMAS.">NOW, NAME EVERYTHING YOU LOVE.</div>
-<div class="m" data-es="ESTA VEZ, EMPIEZA POR TI.">THIS TIME, START WITH YOU.</div>
-<div class="sp"></div>
-<div class="m">DESIGN YOURSELF.</div>
+<div class="lb" data-es="CON QUI&Eacute;N TRABAJAMOS">WHO WE WORK WITH</div>
 
-<div class="sp"></div>
-<a href="/process" class="mf-btn" data-es="VER EL PROCESO">SEE THE PROCESS</a>
-
+<div class="bk">
+<div class="bk-t"><i data-lucide="star" class="ico"></i><span data-es="INFLUENCERS Y CREADORES">INFLUENCERS & CREATORS</span></div>
+<div class="bk-d" data-es="TIENES AUDIENCIA PERO<br>NO TIENES MARCA PERSONAL.<br>BUSCAS IDENTIDAD Y DIRECCI&Oacute;N.">YOU HAVE AN AUDIENCE<br>BUT NO PERSONAL BRAND.<br>YOU'RE LOOKING FOR IDENTITY<br>AND DIRECTION.</div>
 </div>
 
-<!-- NEWSLETTER -->
-<div class="nl-box">
-<div class="nl-label" data-es="SUSCR&Iacute;BETE A NUESTRO NEWSLETTER">SUBSCRIBE TO OUR NEWSLETTER</div>
-<div class="email-wrap">
-<div class="email-field" id="emailField">
-<input type="email" id="emailInput" placeholder="YOUR@EMAIL.COM" required>
-<button type="button" id="emailBtn">&rarr;</button>
+<div class="bk">
+<div class="bk-t"><i data-lucide="tag" class="ico"></i><span data-es="MARCAS INDEPENDIENTES">INDEPENDENT BRANDS</span></div>
+<div class="bk-d" data-es="EL PRODUCTO EXISTE&lt;br&gt;PERO LA IDENTIDAD NO.&lt;br&gt;BUSCAS VOZ Y AUTORIDAD.">THE PRODUCT EXISTS<br>BUT THE IDENTITY DOESN'T.<br>YOU'RE LOOKING FOR VOICE<br>AND AUTHORITY.</div>
 </div>
-<div class="email-ok" id="emailOk" data-es="RECIBIDO.">RECEIVED.</div>
-<div class="email-err" id="emailErr" data-es="INTÉNTALO DE NUEVO.">TRY AGAIN.</div>
+
+<div class="bk">
+<div class="bk-t"><i data-lucide="music" class="ico"></i><span data-es="ARTISTAS Y M&Uacute;SICOS">ARTISTS & MUSICIANS</span></div>
+<div class="bk-d" data-es="EL SONIDO PROMETE PERO&lt;br&gt;FALTA UN UNIVERSO QUE LO DEFINA.&lt;br&gt;&lt;br&gt;BUSCAS NARRATIVA E IMAGINARIO.">THE SOUND DELIVERS BUT<br>THE UNIVERSE AROUND IT<br>IS MISSING.<br><br>YOU'RE LOOKING FOR<br>NARRATIVE AND IMAGERY.</div>
+</div>
+
+<div class="bk">
+<div class="bk-t"><i data-lucide="drama" class="ico"></i><span data-es="ACTORES E INT&Eacute;RPRETES">ACTORS & PERFORMERS</span></div>
+<div class="bk-d" data-es="CONSIGUES PAPELES&lt;br&gt;PERO NO CONSTRUYES NOMBRE.&lt;br&gt;QUIERES QUE TE ELIJAN&lt;br&gt;ANTES DEL CASTING.">YOU BOOK ROLES<br>BUT YOU DON'T BUILD A NAME.<br>YOU WANT TO BE CHOSEN<br>BEFORE THE CASTING CALL.</div>
+</div>
+
+<div class="bk">
+<div class="bk-t"><i data-lucide="rocket" class="ico"></i><span data-es="EMPRESAS Y STARTUPS">COMPANIES & STARTUPS</span></div>
+<div class="bk-d" data-es="EL PRODUCTO FUNCIONA&lt;br&gt;PERO NADIE LO RECUERDA.&lt;br&gt;BUSCAS ALCANCE Y POSICI&Oacute;N.">THE PRODUCT WORKS<br>BUT NOBODY REMEMBERS IT.<br>YOU'RE LOOKING FOR<br>REACH AND POSITION.</div>
 </div>
 </div>
+</section>
+
+<section id="diagnosis">
+<div class="cx">
+<div class="lb" data-es="DIAGN&Oacute;STICO">DIAGNOSIS</div>
+
+<div class="dx" data-es="TU MARCA TIENE FORMA.&lt;br&gt;PERO NO TIENE FUERZA.">YOUR BRAND HAS SHAPE.<br>BUT IT HAS NO FORCE.</div>
+<div class="dx" data-es="SABES QU&Eacute; VENDES.&lt;br&gt;PERO NO SABES&lt;br&gt;QU&Eacute; REPRESENTAS.">YOU KNOW WHAT YOU SELL.<br>BUT YOU DON'T KNOW<br>WHAT YOU STAND FOR.</div>
+<div class="dx" data-es="TU SONIDO EXISTE.&lt;br&gt;PERO TU IMAGEN&lt;br&gt;A&Uacute;N NO LO REFLEJA.">YOUR SOUND EXISTS.<br>BUT YOUR IMAGE<br>DOESN'T REFLECT IT YET.</div>
+<div class="dx" data-es="ACT&Uacute;AS&hellip;&lt;br&gt;PERO NO CONTROLAS&lt;br&gt;LA HISTORIA.">YOU ACT&hellip;<br>BUT YOU DON'T<br>CONTROL THE STORY.</div>
+<div class="dx" data-es="TIENES AUDIENCIA.&lt;br&gt;PERO NO TIENES&lt;br&gt;AUTORIDAD.">YOU HAVE AN AUDIENCE.<br>BUT YOU DON'T<br>HAVE AUTHORITY.</div>
+<div class="dx" data-es="PRODUCES CONTENIDO.&lt;br&gt;PERO NADIE LO RECUERDA.">YOU CREATE CONTENT.<br>BUT NOBODY REMEMBERS IT.</div>
+<div class="dx-f" data-es="ESO NO ES UN PROBLEMA DE CONTENIDO.&lt;br&gt;ES UN PROBLEMA DE DISE&Ntilde;O.">THAT'S NOT A CONTENT PROBLEM.<br>THAT'S A DESIGN PROBLEM.</div>
 </div>
+</section>
+
+<section id="interventions">
+<div class="cx">
+<div class="lb" data-es="QU&Eacute; HACEMOS">WHAT WE DO</div>
+
+<div class="sv">
+<div class="sv-t"><i data-lucide="compass" class="ico"></i><span data-es="DIRECCI&Oacute;N CREATIVA">CREATIVE DIRECTION</span></div>
+<div class="sv-d" data-es="REDEFINIMOS LA DIRECCI&Oacute;N DE TU PROYECTO.&lt;br&gt;QU&Eacute; DECIR, C&Oacute;MO DECIRLO,&lt;br&gt;Y QU&Eacute; DEJAR DE DECIR.">WE REDEFINE YOUR PROJECT'S DIRECTION.<br>WHAT TO SAY, HOW TO SAY IT,<br>AND WHAT TO STOP SAYING.</div>
+</div>
+
+<div class="sv">
+<div class="sv-t"><i data-lucide="target" class="ico"></i><span data-es="IDENTIDAD Y ESTRATEGIA">IDENTITY & STRATEGY</span></div>
+<div class="sv-d" data-es="DEFINIMOS JUNTOS&lt;br&gt;QUI&Eacute;N ERES&lt;br&gt;Y POR QU&Eacute; IMPORTAS.&lt;br&gt;&lt;br&gt;POSICI&Oacute;N, NARRATIVA, SISTEMA VISUAL.&lt;br&gt;TODO LO QUE HACE QUE TE RECONOZCAN&lt;br&gt;ANTES DE QUE HABLES.">WE DEFINE TOGETHER<br>WHO YOU ARE<br>AND WHY YOU MATTER.<br><br>POSITION, NARRATIVE, VISUAL SYSTEM.<br>EVERYTHING THAT MAKES YOU<br>RECOGNIZED BEFORE YOU SPEAK.</div>
+</div>
+
+<div class="sv">
+<div class="sv-t"><i data-lucide="zap" class="ico"></i><span data-es="SESI&Oacute;N ESTRAT&Eacute;GICA">STRATEGY SESSION</span></div>
+<div class="sv-d" data-es="UNA CONVERSACI&Oacute;N QUE&lt;br&gt;REDEFINE EL RUMBO.&lt;br&gt;PARA PROYECTOS QUE NECESITAN&lt;br&gt;DIRECCI&Oacute;N, NO M&Aacute;S REUNIONES.">ONE CONVERSATION THAT<br>REDEFINES THE COURSE.<br>FOR PROJECTS THAT NEED<br>DIRECTION, NOT MORE MEETINGS.</div>
+</div>
+</div>
+</section>
+
+<section id="apply">
+<div class="cx">
+<div class="lb" data-es="TRABAJA CON PRXY">WORK WITH PRXY</div>
+
+<div id="applyForm">
+<div class="ap-h" data-es="DEJA DE PEDIR PERMISO">STOP WAITING FOR PERMISSION</div>
+<div class="ap-s" data-es="SI SABES QUI&Eacute;N ERES,&lt;br&gt;PERO NADIE M&Aacute;S LO VE,&lt;br&gt;ESE ES UN PROBLEMA DE DISE&Ntilde;O.&lt;br&gt;ESCR&Iacute;BENOS.">IF YOU KNOW WHO YOU ARE,<br>BUT NOBODY ELSE SEES IT,<br>THAT'S A DESIGN PROBLEM.<br>WRITE TO US.</div>
+
+<form id="contactForm" autocomplete="off">
+<div class="fg">
+<select id="formType" required>
+<option value="" disabled selected data-es="SOY &mdash;">I AM &mdash;</option>
+<option value="influencer" data-es="UN INFLUENCER / CREADOR">AN INFLUENCER / CREATOR</option>
+<option value="fashion" data-es="UNA MARCA DE MODA">A FASHION BRAND</option>
+<option value="musician" data-es="UN M&Uacute;SICO">A MUSICIAN</option>
+<option value="actor" data-es="UN ACTOR">AN ACTOR</option>
+<option value="company" data-es="UNA EMPRESA / STARTUP">A COMPANY / STARTUP</option>
+</select>
+</div>
+<div class="fg">
+<textarea id="formDesc" placeholder="TELL US ABOUT YOUR PROJECT" data-es-ph="CU&Eacute;NTANOS TU PROYECTO"></textarea>
+</div>
+<div class="fg">
+<input type="email" id="formEmail" placeholder="YOUR@EMAIL.COM" required>
+</div>
+<div class="fg">
+<input type="tel" id="formPhone" placeholder="+34 600 000 000" data-es-ph="+34 600 000 000">
+</div>
+<button type="submit" class="sub-btn" data-es="ENVIAR">SEND</button>
+</form>
+</div>
+
+<div class="ap-ok" id="applyOk" data-es="RECIBIDO. ESTAREMOS EN CONTACTO.">RECEIVED. WE'LL BE IN TOUCH.</div>
+</div>
+</section>
+
 <!-- SEAL -->
 <div class="seal-wrap">
 <svg class="seal" viewBox="-24 -24 248 248" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -467,6 +451,7 @@ footer{
 
 <footer>PRXY<br><span id="yr"></span></footer>
 
+
 <script>
 (function(){
 
@@ -475,85 +460,81 @@ footer{
 
   // ── Language ──
   var lang=localStorage.getItem('prxy-lang')||'en';
+  var en=new Map();
+
+  document.querySelectorAll('[data-es]').forEach(function(el){
+    en.set(el,el.innerHTML);
+  });
+
   function updateLangBtns(){
-    var en=document.getElementById('langEN'),es=document.getElementById('langES');
-    if(en){en.classList.toggle('on',lang==='en')}
-    if(es){es.classList.toggle('on',lang==='es')}
+    var enBtn=document.getElementById('langEN'),esBtn=document.getElementById('langES');
+    if(enBtn){enBtn.classList.toggle('on',lang==='en')}
+    if(esBtn){esBtn.classList.toggle('on',lang==='es')}
   }
+
   function setLang(l){
     lang=l;localStorage.setItem('prxy-lang',l);
-    document.querySelectorAll('[data-es]').forEach(function(el){
-      if(l==='es'){if(!el.getAttribute('data-en'))el.setAttribute('data-en',el.innerHTML);el.innerHTML=el.getAttribute('data-es')}
-      else{if(el.getAttribute('data-en'))el.innerHTML=el.getAttribute('data-en')}
+    en.forEach(function(html,el){
+      el.innerHTML=l==='es'?el.getAttribute('data-es'):html;
     });
-    var ph=document.getElementById('emailInput');
-    if(ph)ph.placeholder=l==='es'?'TU@EMAIL.COM':'YOUR@EMAIL.COM';
+    document.querySelectorAll('[data-es-ph]').forEach(function(el){
+      if(!el._enph)el._enph=el.placeholder;
+      el.placeholder=l==='es'?el.getAttribute('data-es-ph'):el._enph;
+    });
     document.documentElement.lang=l;
     updateLangBtns();
   }
+
   if(lang==='es')setLang('es');
   updateLangBtns();
   document.getElementById('langEN').addEventListener('click',function(e){e.preventDefault();setLang('en')});
   document.getElementById('langES').addEventListener('click',function(e){e.preventDefault();setLang('es')});
 
-  // ── Cart badge (reads from prxy-cart in localStorage) ──
+  // ── Cart badge ──
   function updateCartBadge(){
     try{var c=JSON.parse(localStorage.getItem('prxy-cart')||'[]');var n=0;c.forEach(function(i){n+=(i.qty||1)});var b=document.getElementById('cartCount');if(b){b.textContent=n;b.classList.toggle('show',n>0)}}catch(e){}
   }
   updateCartBadge();
   window.addEventListener('storage',function(e){if(e.key==='prxy-cart')updateCartBadge()});
 
-
-  // ── Manifesto reveal ──
-  var items=Array.from(document.querySelectorAll('.m,.dots,.mf-btn,.nl-box'));
-  var total=items.length;
-  var duration=3000;
-  var delay=duration/total;
-
-  setTimeout(function(){
-    items.forEach(function(el,i){
-      setTimeout(function(){el.classList.add('v')},i*delay);
+  // ── Section reveal on scroll ──
+  var ss=document.querySelectorAll('section');
+  var so=new IntersectionObserver(function(ee){
+    ee.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('v');so.unobserve(e.target)}
     });
-  },300);
+  },{threshold:0.05});
+  ss.forEach(function(s){so.observe(s)});
 
-  // ── Email subscribe ──
+  // select
+  var sel=document.getElementById('formType');
+  sel.addEventListener('change',function(){this.classList.toggle('hv',this.value!=='')});
+
+  // form
   var WORKER_URL='https://prxy-email.prxystudio.workers.dev';
-
-  function submitEmail(){
-    var input=document.getElementById('emailInput');
-    var email=input.value.trim();
-    if(!email||email.indexOf('@')===-1)return;
-
-    var ok=document.getElementById('emailOk');
-    var err=document.getElementById('emailErr');
-    var field=document.getElementById('emailField');
-
-    ok.style.display='none';
-    err.style.display='none';
-
-    fetch(WORKER_URL,{
+  document.getElementById('contactForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=e.target.querySelector('button[type="submit"]');
+    btn.disabled=true;btn.textContent='...';
+    fetch(WORKER_URL+'/contact',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email:email})
-    })
-    .then(function(res){
-      if(res.ok){
-        field.style.display='none';
-        ok.style.display='block';
-      }else{
-        err.style.display='block';
-      }
-    })
-    .catch(function(){
-      err.style.display='block';
+      body:JSON.stringify({
+        type:document.getElementById('formType').value,
+        description:document.getElementById('formDesc').value,
+        email:document.getElementById('formEmail').value,
+        phone:document.getElementById('formPhone').value
+      })
+    }).then(function(r){
+      if(!r.ok)throw new Error(r.status);
+      document.getElementById('applyForm').style.display='none';
+      document.getElementById('applyOk').style.display='block';
+    }).catch(function(){
+      btn.disabled=false;btn.textContent=document.documentElement.lang==='es'?'ENVIAR':'SEND';
+      alert('Error sending — please try again.');
     });
-  }
-
-  document.getElementById('emailBtn').addEventListener('click',submitEmail);
-  document.getElementById('emailInput').addEventListener('keydown',function(e){
-    if(e.key==='Enter')submitEmail();
   });
-
+  if(window.lucide)lucide.createIcons();
   setTimeout(function(){var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}},800)
 })();
 </script>

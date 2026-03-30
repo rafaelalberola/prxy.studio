@@ -176,7 +176,7 @@ nav{
   min-height:100vh;
   display:flex;
   align-items:center;
-  padding:200px 40px 120px;
+  padding:200px 40px 0px;
   text-align:center;
 }
 
@@ -204,6 +204,7 @@ nav{
   transition:opacity .4s ease,transform .4s ease;
 }
 .nl-box.v{opacity:1;transform:translateY(0);width:100%}.nl-box.v{opacity:1;transform:translateY(0)}
+@media(min-width:768px){.nl-box.v{width:400px;margin-left:auto;margin-right:auto}}
 .nl-label{
   font-size:10px;
   letter-spacing:.15em;
@@ -214,7 +215,7 @@ nav{
 }.email-field{
   display:flex;
   border-bottom:1px solid rgba(0,0,0,.15);
-  max-width:320px;
+  max-width:420px;
   margin:0 auto;
 }
 .email-field input{
@@ -268,9 +269,9 @@ nav{
   display:flex;justify-content:center;
   padding:120px 40px 0;
 }
-.seal{width:160px;height:160px}
+.seal{width:190px;height:190px}
 .seal-text{
-  font:500 8px/1 'GT Pressura Mono',monospace;
+  font:500 9.5px/1 'GT Pressura Mono',monospace;
   fill:#1a1a1a;
   letter-spacing:.25em;
   text-transform:uppercase;
@@ -305,7 +306,7 @@ footer{
 /* MOBILE */
 @media(max-width:768px){
   nav{padding:20px 20px 0}
-  #landing{flex-direction:column;padding:130px 20px 70px}
+  #landing{flex-direction:column;padding:130px 20px 0px}
   .cx{max-width:100%}
   .email-field{max-width:100%}
   footer{padding:80px 20px 40px}

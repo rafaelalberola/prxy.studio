@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>@media(pointer:fine){html,html *{cursor:none!important}}body{opacity:1}
-.dot-cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.25,.1,.25,1),height .2s cubic-bezier(.25,.1,.25,1),opacity .2s ease}
+.dot-cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.25,.1,.25,1),height .2s cubic-bezier(.25,.1,.25,1);opacity:0;visibility:hidden}
 .dot-cursor.hover{width:40px;height:40px}
 </style>
 <script>
@@ -13,17 +13,20 @@
   var dot=document.createElement('div');
   dot.className='dot-cursor';
   var sp=sessionStorage.getItem('prxy-cursor');
-  var mx=0,my=0,dx=0,dy=0,magTarget=null,hasMoved=false;
-  if(sp){try{var pp=JSON.parse(sp);mx=pp.x;my=pp.y;dx=pp.x;dy=pp.y;dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';hasMoved=true}catch(e){}}
+  var mx=0,my=0,dx=0,dy=0,magTarget=null,hasMoved=false,spaNav=false;
+  if(sp){try{var pp=JSON.parse(sp);mx=pp.x;my=pp.y;dx=pp.x;dy=pp.y;dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';dot.style.visibility='visible';dot.style.opacity='1';hasMoved=true}catch(e){}}
   if(!hasMoved)dot.style.opacity='0';
   document.documentElement.appendChild(dot);
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;if(!hasMoved){hasMoved=true;dx=mx;dy=my;dot.style.opacity='1'}sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}))});
+  document.addEventListener('mousemove',function(e){if(spaNav)return;mx=e.clientX;my=e.clientY;if(!hasMoved){hasMoved=true;dx=mx;dy=my;dot.style.visibility='visible';dot.style.opacity='1'}sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}))});
   document.addEventListener('mouseleave',function(){dot.style.opacity='0'});
   document.addEventListener('mouseenter',function(){dot.style.opacity='1'});
   function lerp(a,b,t){return a+(b-a)*t}
   (function tick(){
-    if(magTarget){try{var r=magTarget.getBoundingClientRect();dx=lerp(dx,r.left+r.width/2,.15);dy=lerp(dy,r.top+r.height/2,.15)}catch(e){magTarget=null}}
-    else{dx=lerp(dx,mx,.2);dy=lerp(dy,my,.2)}
+    if(document.body&&!document.body.contains(dot))document.body.appendChild(dot);
+    if(!spaNav){
+      if(magTarget){try{var r=magTarget.getBoundingClientRect();dx=lerp(dx,r.left+r.width/2,.15);dy=lerp(dy,r.top+r.height/2,.15)}catch(e){magTarget=null}}
+      else{dx=lerp(dx,mx,.2);dy=lerp(dy,my,.2)}
+    }
     dot.style.left=dx+'px';dot.style.top=dy+'px';
     requestAnimationFrame(tick);
   })();
@@ -43,6 +46,8 @@
   });
 
   function spaNavigate(url,push){
+    spaNav=true;
+    if(hasMoved)sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}));
     magTarget=null;dot.classList.remove('hover');
     var ld=document.getElementById('prxyLoader');if(ld){ld.classList.remove('out');ld.style.display='flex'}
     setTimeout(function(){
@@ -54,6 +59,7 @@
         for(var i=1;i<oldS.length;i++)oldS[i].remove();
         var newS=doc.head.querySelectorAll('style');
         for(var i=1;i<newS.length;i++)document.head.appendChild(newS[i]);
+        if(dot.parentNode)dot.parentNode.removeChild(dot);
         document.body.innerHTML='';
         var nodes=doc.body.childNodes;
         while(nodes.length){document.body.appendChild(nodes[0])}
@@ -64,6 +70,8 @@
           else s.textContent=old.textContent;
           old.parentNode.replaceChild(s,old);
         });
+        document.body.appendChild(dot);dot.style.left=dx+'px';dot.style.top=dy+'px';
+        spaNav=false;
         if(push)history.pushState(null,'',url);
         var hash=url.split('#')[1];
         if(hash){var el=document.getElementById(hash);if(el)el.scrollIntoView()}
@@ -96,7 +104,7 @@
 
 body{
   background:#fbfbfb;
-  color:#1a1a1a;
+  color:#111;
   font:500 15px/1.5 'GT Pressura Mono',monospace;
   -webkit-font-smoothing:antialiased;
   text-transform:uppercase;
@@ -104,9 +112,9 @@ body{
   overflow-x:hidden;
 }
 
-::selection{background:#1a1a1a;color:#fff}
+::selection{background:#111;color:#fff}
 a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
-button,input{font:inherit;text-transform:uppercase;color:#1a1a1a}
+button,input{font:inherit;text-transform:uppercase;color:#111}
 
 @keyframes morph{
   0%,100%{border-radius:0;transform:rotate(0deg)}
@@ -155,18 +163,18 @@ nav{
   flex-shrink:0;
   animation:morph 4s ease-in-out infinite;
 }
-.nav-r{font-size:15px;letter-spacing:0;opacity:.25;transition:opacity .2s}
-.nav-r:hover{opacity:1}
-.nav-r.active{opacity:1}
+.nav-r{font-size:15px;letter-spacing:0;color:#8e8e8e;transition:color .2s}
+.nav-r:hover{color:#111}
+.nav-r.active{color:#111}
 .nav-cart{position:relative;display:flex;align-items:center;height:24px;transition:opacity .2s}
 .nav-cart svg{display:block;opacity:.35;transition:opacity .2s}
 .nav-cart:hover svg{opacity:1}
 .cart-badge{position:absolute;top:-6px;right:-8px;background:#FF4D2A;color:#fff;font-size:9px;min-width:14px;height:14px;border-radius:50%;display:none;align-items:center;justify-content:center;line-height:1;letter-spacing:0}
 .cart-badge.show{display:flex}
 .nav-lang-wrap{display:flex;gap:6px;align-items:center}
-.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;opacity:.25;cursor:pointer;transition:opacity .2s}
-.lang-btn:hover{opacity:.6}
-.lang-btn.on{opacity:1}
+.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;color:#8e8e8e;cursor:pointer;transition:color .2s}
+.lang-btn:hover{color:#555}
+.lang-btn.on{color:#111}
 
 /* LAYOUT */
 .cx{max-width:420px;margin:0 auto}
@@ -208,7 +216,7 @@ nav{
 .nl-label{
   font-size:10px;
   letter-spacing:.15em;
-  opacity:.3;
+  color:#8e8e8e;
 }
 .email-wrap{width:80%;
   margin-top:20px;
@@ -228,16 +236,16 @@ nav{
   outline:none;
   text-align:center;
 }
-::placeholder{color:rgba(0,0,0,.2);text-transform:uppercase}
-.email-field input:focus{border-color:#1a1a1a}
+::placeholder{color:#8e8e8e;text-transform:uppercase}
+.email-field input:focus{border-color:#111}
 .email-field button{
   background:none;border:none;
   padding:14px 0 14px 16px;
   font-size:15px;letter-spacing:0;
-  cursor:pointer;opacity:.3;
-  transition:opacity .2s;
+  cursor:pointer;color:#8e8e8e;
+  transition:color .2s;
 }
-.email-field button:hover{opacity:1}
+.email-field button:hover{color:#111}
 .email-ok{
   display:none;
   font-size:15px;
@@ -258,10 +266,9 @@ nav{
   bottom:32px;right:2px;
   font-size:8px;
   letter-spacing:.1em;
-  opacity:.25;
   z-index:5;
   writing-mode:vertical-rl;
-  color:#1a1a1a;
+  color:#8e8e8e;
 }
 
 /* SEAL */
@@ -272,7 +279,7 @@ nav{
 .seal{width:190px;height:190px}
 .seal-text{
   font:500 8.5px/1 'GT Pressura Mono',monospace;
-  fill:#1a1a1a;
+  fill:#111;
   letter-spacing:.15em;
   text-transform:uppercase;
 }
@@ -300,7 +307,7 @@ nav{
 /* FOOTER */
 footer{
   text-align:center;padding:60px 40px 60px;
-  font-size:15px;letter-spacing:0;opacity:.25;color:#1a1a1a;
+  font-size:15px;letter-spacing:0;color:#8e8e8e;
 }
 
 /* MOBILE */
@@ -312,16 +319,44 @@ footer{
   footer{padding:80px 20px 40px}
 }
 
+
+/* CART DRAWER */
+.cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.cart-overlay.open{opacity:1;pointer-events:auto}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:#fbfbfb;z-index:201;transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.1,.25,1);display:flex;flex-direction:column}
+.cart-drawer.open{transform:translateX(0)}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-title{font-size:15px;letter-spacing:.08em}
+.cart-close{cursor:pointer;color:#8e8e8e;transition:color .2s;background:none;border:none;font-size:28px;line-height:1;padding:8px}
+.cart-close:hover{color:#111}
+.cart-items{flex:1;overflow-y:auto}
+.cart-item{display:flex;gap:20px;padding:24px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-item-img{width:72px;height:72px;object-fit:contain;flex-shrink:0}
+.cart-item-info{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cart-item-name{font-size:15px;letter-spacing:0;margin-bottom:2px}
+.cart-item-size{font-size:15px;letter-spacing:.05em;color:#8e8e8e;margin-bottom:4px}
+.cart-item-price{font-size:15px;letter-spacing:0;color:#8e8e8e}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:40px;font-size:13px;letter-spacing:.05em;color:#8e8e8e}
+.cart-shop-btn{display:block;width:100%;background:#111;color:#fbfbfb;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;text-align:center;margin-top:24px;transition:background .2s}
+.cart-shop-btn:hover{background:#000}
+.cart-footer{padding:24px 16px 40px;border-top:1px solid rgba(0,0,0,.06)}
+.cart-total{display:flex;justify-content:space-between;font-size:15px;letter-spacing:.02em;margin-bottom:24px}
+.checkout-btn{width:100%;background:#111;color:#fbfbfb;border:none;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;cursor:pointer;transition:all .2s}
+.checkout-btn:hover{background:#000}
+.checkout-btn:active{transform:scale(.98)}
+@media(max-width:768px){.cart-drawer{width:100vw}}
+
 </style>
 </head>
 <body>
+<script>if(!window.__cg){window.__cg=1;document.addEventListener('mousemove',function(e){if(e.clientX===0&&e.clientY===0){e.stopImmediatePropagation()}},true)}</script>
 <div class="prxy-loader" id="prxyLoader"><div class="prxy-loader-dot"></div></div>
 
 <nav>
   <div class="nav-top">
     <a href="/" class="logo">PRXY<span class="cursor"></span></a>
     <div class="nav-acts">
-      <a href="/shop#bag" class="nav-cart" id="cartToggle">
+      <a href="#" class="nav-cart" id="cartToggle">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         <span class="cart-badge" id="cartCount">0</span>
       </a>
@@ -332,7 +367,7 @@ footer{
     </div>
   </div>
   <div class="nav-links">
-    <a href="/manifesto" class="nav-r active" data-es="VISIÓN">VISION</a>
+    <a href="/vision" class="nav-r active" data-es="VISIÓN">VISION</a>
     <a href="/process" class="nav-r" data-es="PROCESO">PROCESS</a>
     <a href="/services" class="nav-r" data-es="SERVICIOS">SERVICES</a>
     <a href="/shop" class="nav-r" data-es="TIENDA">SHOP</a>
@@ -346,46 +381,55 @@ footer{
 <div class="cx">
 <div class="m" data-es="SOMOS HIJOS DE UN MUNDO">WE'RE SONS OF A WORLD</div>
 <div class="m" data-es="QUE CRECIÓ DEMASIADO RÁPIDO.">THAT GREW UP TOO FAST.</div>
-<div class="sp"></div>
 <div class="m" data-es="UN SISTEMA QUE TE NECESITA OCUPADO.">A SYSTEM THAT NEEDS YOU BUSY.</div>
-<div class="m" data-es="NO FELIZ.">NOT HAPPY.</div>
-<div class="m" data-es="NO LIBRE.">NOT FREE.</div>
+<div class="sp"></div>
+<div class="m" data-es="NO FELIZ,">NOT HAPPY,</div>
+<div class="m" data-es="NO LIBRE,">NOT FREE,</div>
 <div class="m" data-es="NO VIVO.">NOT ALIVE.</div>
+<div class="sp"></div>
 <div class="m" data-es="OCUPADO.">BUSY.</div>
 <div class="sp"></div>
-<div class="m" data-es="ELLOS DISEÑARON EL SISTEMA.">THEY DESIGNED THE SYSTEM.</div>
+<div class="m" data-es="ELLOS DISEÑARON EL SISTEMA">THEY DESIGNED THE SYSTEM</div>
+<div class="sp"></div>
 <div class="m" data-es="Y TÚ LO SEGUISTE.">AND YOU FOLLOWED IT.</div>
 <div class="sp"></div>
-<div class="m" data-es="AHORA QUIERES LO QUE TE VENDIERON.">NOW YOU WANT WHAT THEY SOLD YOU.</div>
-<div class="m" data-es="CREES LO QUE TE DIJERON.">YOU BELIEVE WHAT THEY TOLD YOU.</div>
+<div class="m" data-es="AHORA QUIERES LO QUE TE VENDIERON,">NOW YOU WANT WHAT THEY SOLD YOU,</div>
+<div class="m" data-es="CREES LO QUE TE DIJERON,">YOU BELIEVE WHAT THEY TOLD YOU,</div>
 <div class="m" data-es="REPITES LO QUE TE ENSEÑARON.">YOU REPEAT WHAT THEY TAUGHT YOU.</div>
 <div class="sp"></div>
 <div class="m" data-es="Y SI INTENTAS SER DIFERENTE,">AND IF YOU TRY TO BE DIFFERENT,</div>
 <div class="m" data-es="TE DICEN QUE ESTÁ MAL.">THEY TELL YOU IT'S WRONG.</div>
 <div class="sp"></div>
-<div class="m" data-es="ELLOS DISEÑARON EL ESTÁNDAR.">THEY DESIGNED THE STANDARD.</div>
-<div class="m" data-es="LA CARA. EL CUERPO. LA CASA.">THE FACE. THE BODY. THE HOUSE.</div>
-<div class="m" data-es="LA VIDA QUE DEBES DESEAR.">THE LIFE YOU'RE SUPPOSED TO WANT.</div>
+<div class="sp"></div>
+<div class="m" data-es="ELLOS DISEÑARON EL ESTÁNDAR:">THEY DESIGNED THE STANDARD:</div>
+<div class="m" data-es="LA CARA, EL CUERPO, LA CASA,">THE FACE, THE BODY, THE HOUSE,</div>
+<div class="m" data-es="LA VIDA QUE DEBES DESEAR,">THE LIFE YOU'RE SUPPOSED TO WANT,</div>
+<div class="sp"></div>
 <div class="m" data-es="LA PERSONA EN LA QUE DEBES CONVERTIRTE.">THE PERSON YOU'RE SUPPOSED TO BE.</div>
 <div class="sp"></div>
-<div class="m" data-es="¿Y TÚ?">AND YOU?</div>
-<div class="sp"></div>
-<div class="m" data-es="TÚ DIJISTE QUE SÍ.">YOU SAID YES.</div>
+<div class="m" data-es="QUIEN SER.">WHO TO BE.</div>
+<div class="m" data-es="CÓMO SER.">HOW TO BE.</div>
 <div class="sp"></div>
 <div class="dots">&#x2605;&#x2605;</div>
 <div class="sp"></div>
-<div class="m" data-es="HASTA HOY.">UNTIL TODAY.</div>
+<div class="m" data-es="SI TE PIDO QUE NOMBRES">IF I ASK YOU TO NAME</div>
+<div class="m" data-es="TODO LO QUE AMAS,">EVERYTHING YOU LOVE,</div>
+<div class="m" data-es="CUÁNTO TARDAS">HOW LONG DOES IT TAKE</div>
+<div class="m" data-es="EN NOMBRARTE A TI MISMO?">TO NAME YOURSELF?</div>
 <div class="sp"></div>
-<div class="m" data-es="YO DECIDO QUÉ CREER.">I DECIDE WHAT TO BELIEVE.</div>
+<div class="dots">&#x2605;&#x2605;</div>
+<div class="sp"></div>
+<div class="m" data-es="YO DECIDO EN LO QUE CREER.">I DECIDE WHAT TO BELIEVE.</div>
 <div class="m" data-es="YO DECIDO QUÉ PENSAR.">I DECIDE WHAT TO THINK.</div>
 <div class="m" data-es="YO DECIDO QUÉ SENTIR.">I DECIDE WHAT TO FEEL.</div>
 <div class="sp"></div>
-<div class="m" data-es="Y DECIDO CREER">AND I DECIDE TO BELIEVE</div>
+<div class="m" data-es="Y DECIDO">AND I DECIDE</div>
+<div class="m" data-es="NO CREER">NOT TO BELIEVE</div>
 <div class="m" data-es="EN NADA.">IN NOTHING.</div>
 <div class="sp"></div>
-<div class="m" data-es="NADA ME DEFINE.">NOTHING DEFINES ME.</div>
-<div class="m" data-es="NADA ME LIMITA.">NOTHING LIMITS ME.</div>
-<div class="m" data-es="NADA ME PARA.">NOTHING DEFEATS ME.</div>
+<div class="m" data-es="NADA ME DEFINE,">NOTHING DEFINES ME,</div>
+<div class="m" data-es="NADA ME LIMITA,">NOTHING LIMITS ME,</div>
+<div class="m" data-es="NADA ME FRENA.">NOTHING STOPS ME.</div>
 <div class="sp"></div>
 <div class="m" data-es="NO SOY UN NOMBRE.">I'M NOT A NAME.</div>
 <div class="m" data-es="NO SOY UNA ETIQUETA.">I'M NOT A LABEL.</div>
@@ -394,35 +438,26 @@ footer{
 <div class="m" data-es="SOY UNA IDEA.">I'M AN IDEA.</div>
 <div class="m" data-es="ATEMPORAL.">TIMELESS.</div>
 <div class="sp"></div>
-<div class="m" data-es="TENGO UNA VISIÓN.">I HAVE A VISION.</div>
-<div class="m" data-es="LA DISEÑO.">I DESIGN IT.</div>
-<div class="m" data-es="ME CONVIERTO EN ELLA.">I BECOME IT.</div>
-<div class="m" data-es="CONSTRUYO.">I BUILD.</div>
+<div class="m" data-es="TENGO UNA VISIÓN,">I HAVE A VISION,</div>
+<div class="m" data-es="LA DISEÑO,">I DESIGN IT,</div>
+<div class="m" data-es="ME CONVIERTO EN ELLA,">I BECOME IT,</div>
+<div class="m" data-es="ME CONSTRUYO.">I BUILD MYSELF.</div>
 <div class="sp"></div>
-<div class="m" data-es="YO ELIJO LO QUE OCURRE.">I CHOOSE WHAT HAPPENS.</div>
-<div class="m" data-es="DISEÑO CÓMO VA A OCURRIR.">I DESIGN HOW IT HAPPENS.</div>
-<div class="m" data-es="VEO CÓMO TOMA FORMA.">I WATCH IT TAKE SHAPE.</div>
+<div class="m" data-es="YO ELIJO LO QUE OCURRE,">I CHOOSE WHAT HAPPENS,</div>
+<div class="m" data-es="DISEÑO CÓMO VA A OCURRIR,">I DESIGN HOW IT HAPPENS,</div>
+<div class="m" data-es="VEO CÓMO TOMA FORMA,">I WATCH IT TAKE SHAPE,</div>
 <div class="m" data-es="Y LO REFINO CADA DÍA.">AND I REFINE IT EVERY DAY.</div>
 <div class="sp"></div>
-<div class="m" data-es="NO CUMPLO EXPECTATIVAS.">I DON'T MEET EXPECTATIONS.</div>
+<div class="m" data-es="NO CUMPLO EXPECTATIVAS,">I DON'T MEET EXPECTATIONS,</div>
 <div class="m" data-es="LAS DISEÑO.">I DESIGN THEM.</div>
 <div class="sp"></div>
 <div class="m" data-es="NO SOY LO QUE CUENTAN DE MÍ.">I'M NOT WHAT THEY SAY ABOUT ME.</div>
 <div class="m" data-es="YO DISEÑO LA NARRATIVA.">I DESIGN THE NARRATIVE.</div>
+<div class="m" data-es="ME DISEÑO A MI MISMO.">I DESIGN MYSELF.</div>
 <div class="sp"></div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="m" data-es="DISEÑATE A TI MISMO.">DESIGN YOURSELF.</div>
-<div class="sp"></div>
-<div class="m" data-es="TÚ DEFINES EL ESTÁNDAR.">YOU DEFINE THE STANDARD.</div>
+<div class="m" data-es="DISEÑATE A TI MISMO,">DESIGN YOURSELF,</div>
+<div class="m" data-es="TÚ DEFINES EL ESTÁNDAR,">YOU DEFINE THE STANDARD,</div>
 <div class="m" data-es="TÚ MOLDEAS LA REALIDAD.">YOU SHAPE REALITY.</div>
-<div class="sp"></div>
-<div class="dots">&#x2605;&#x2605;</div>
-<div class="sp"></div>
-<div class="m" data-es="AHORA, NOMBRA TODO LO QUE AMAS.">NOW, NAME EVERYTHING YOU LOVE.</div>
-<div class="m" data-es="ESTA VEZ, EMPIEZA POR TI.">THIS TIME, START WITH YOU.</div>
-<div class="sp"></div>
-<div class="m">DESIGN YOURSELF.</div>
 
 <div class="sp"></div>
 <a href="/process" class="mf-btn" data-es="VER EL PROCESO">SEE THE PROCESS</a>
@@ -449,22 +484,41 @@ footer{
 <path id="arcTR" d="M 109,-4 A 104,104 0 0,1 180,167" fill="none"/>
 <path id="arcBL" d="M 91,204 A 104,104 0 0,1 20,33" fill="none"/>
 </defs>
-<circle cx="100" cy="100" r="118" stroke="#1a1a1a" stroke-width=".9" fill="none"/>
-<circle cx="100" cy="100" r="96" stroke="#1a1a1a" stroke-width=".9"/>
-<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#1a1a1a" stroke-width=".7"/>
-<line x1="4" y1="100" x2="196" y2="100" stroke="#1a1a1a" stroke-width=".7"/>
-<line x1="100" y1="4" x2="100" y2="196" stroke="#1a1a1a" stroke-width=".7"/>
+<circle cx="100" cy="100" r="118" stroke="#111" stroke-width=".9" fill="none"/>
+<circle cx="100" cy="100" r="96" stroke="#111" stroke-width=".9"/>
+<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#111" stroke-width=".7"/>
+<line x1="4" y1="100" x2="196" y2="100" stroke="#111" stroke-width=".7"/>
+<line x1="100" y1="4" x2="100" y2="196" stroke="#111" stroke-width=".7"/>
 <rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
 <text class="seal-text"><textPath href="#arcTR" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
 <text class="seal-text"><textPath href="#arcBL" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
-<path d="M -2,67 A 107,107 0 0,1 93,-7" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
-<path d="M 202,133 A 107,107 0 0,1 108,207" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
+<path d="M -2,67 A 107,107 0 0,1 93,-7" stroke="#111" stroke-width=".7" fill="none"/>
+<path d="M 202,133 A 107,107 0 0,1 108,207" stroke="#111" stroke-width=".7" fill="none"/>
 </svg>
+</div>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title" data-es="TU CESTA">YOUR BAG</div>
+    <button class="cart-close" id="cartClose">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty" id="cartEmpty"><span data-es="VACÍA">EMPTY</span><a href="/shop" class="cart-shop-btn" data-es="VER TIENDA">SEE SHOP</a></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span data-es="TOTAL">TOTAL</span>
+      <span id="cartTotal">€0</span>
+    </div>
+    <a href="/shop" class="checkout-btn" data-es="IR A LA TIENDA">GO TO SHOP</a>
+  </div>
 </div>
 
 <footer>PRXY<br><span id="yr"></span></footer>
@@ -504,6 +558,34 @@ footer{
   }
   updateCartBadge();
   window.addEventListener('storage',function(e){if(e.key==='prxy-cart')updateCartBadge()});
+
+  // ── Cart drawer ──
+  function getCart(){try{return JSON.parse(localStorage.getItem('prxy-cart')||'[]')}catch(e){return[]}}
+  function renderCartDrawer(){
+    var cart=getCart();var items=document.getElementById('cartItems');var empty=document.getElementById('cartEmpty');
+    var footer=document.getElementById('cartFooter');var total=document.getElementById('cartTotal');
+    if(!items)return;
+    items.querySelectorAll('.cart-item').forEach(function(el){el.remove()});
+    if(cart.length===0){empty.style.display='flex';footer.style.display='none';return}
+    empty.style.display='none';footer.style.display='block';
+    var sum=0;
+    cart.forEach(function(item){
+      sum+=(item.price||0)*(item.qty||1);
+      var d=document.createElement('div');d.className='cart-item';
+      d.innerHTML='<img class="cart-item-img" src="'+(item.img||'')+'" alt="">'
+        +'<div class="cart-item-info"><div class="cart-item-name">'+item.name+'</div>'
+        +(item.size?'<div class="cart-item-size">'+item.size+'</div>':'')
+        +'<div class="cart-item-price">€'+item.price+'</div></div>';
+      items.appendChild(d);
+    });
+    total.textContent='€'+sum;
+  }
+  function openCart(){renderCartDrawer();document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartDrawer').classList.add('open');document.body.style.overflow='hidden'}
+  function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow=''}
+  document.getElementById('cartToggle').addEventListener('click',function(e){e.preventDefault();openCart()});
+  document.getElementById('cartOverlay').addEventListener('click',closeCart);
+  document.getElementById('cartClose').addEventListener('click',closeCart);
+
 
 
   // ── Manifesto reveal ──
@@ -558,6 +640,16 @@ footer{
 
   setTimeout(function(){var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}},800)
 })();
+</script>
+<script>
+setTimeout(function(){
+  var sp=sessionStorage.getItem('prxy-cursor');if(!sp)return;
+  try{var pp=JSON.parse(sp);
+  document.dispatchEvent(new MouseEvent('mousemove',{clientX:pp.x,clientY:pp.y,bubbles:true}));
+  var dot=document.querySelector('.dot-cursor');if(!dot)return;
+  var n=0;(function f(){dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';if(++n<10)requestAnimationFrame(f)})()
+  }catch(e){}
+},100);
 </script>
 </body>
 </html>

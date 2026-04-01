@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>@media(pointer:fine){html,html *{cursor:none!important}}body{opacity:1}
-.dot-cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.25,.1,.25,1),height .2s cubic-bezier(.25,.1,.25,1),opacity .2s ease}
+.dot-cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.25,.1,.25,1),height .2s cubic-bezier(.25,.1,.25,1);opacity:0;visibility:hidden}
 .dot-cursor.hover{width:40px;height:40px}
 </style>
 <script>
@@ -13,17 +13,20 @@
   var dot=document.createElement('div');
   dot.className='dot-cursor';
   var sp=sessionStorage.getItem('prxy-cursor');
-  var mx=0,my=0,dx=0,dy=0,magTarget=null,hasMoved=false;
-  if(sp){try{var pp=JSON.parse(sp);mx=pp.x;my=pp.y;dx=pp.x;dy=pp.y;dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';hasMoved=true}catch(e){}}
+  var mx=0,my=0,dx=0,dy=0,magTarget=null,hasMoved=false,spaNav=false;
+  if(sp){try{var pp=JSON.parse(sp);mx=pp.x;my=pp.y;dx=pp.x;dy=pp.y;dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';dot.style.visibility='visible';dot.style.opacity='1';hasMoved=true}catch(e){}}
   if(!hasMoved)dot.style.opacity='0';
   document.documentElement.appendChild(dot);
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;if(!hasMoved){hasMoved=true;dx=mx;dy=my;dot.style.opacity='1'}sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}))});
+  document.addEventListener('mousemove',function(e){if(spaNav)return;mx=e.clientX;my=e.clientY;if(!hasMoved){hasMoved=true;dx=mx;dy=my;dot.style.visibility='visible';dot.style.opacity='1'}sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}))});
   document.addEventListener('mouseleave',function(){dot.style.opacity='0'});
   document.addEventListener('mouseenter',function(){dot.style.opacity='1'});
   function lerp(a,b,t){return a+(b-a)*t}
   (function tick(){
-    if(magTarget){try{var r=magTarget.getBoundingClientRect();dx=lerp(dx,r.left+r.width/2,.15);dy=lerp(dy,r.top+r.height/2,.15)}catch(e){magTarget=null}}
-    else{dx=lerp(dx,mx,.2);dy=lerp(dy,my,.2)}
+    if(document.body&&!document.body.contains(dot))document.body.appendChild(dot);
+    if(!spaNav){
+      if(magTarget){try{var r=magTarget.getBoundingClientRect();dx=lerp(dx,r.left+r.width/2,.15);dy=lerp(dy,r.top+r.height/2,.15)}catch(e){magTarget=null}}
+      else{dx=lerp(dx,mx,.2);dy=lerp(dy,my,.2)}
+    }
     dot.style.left=dx+'px';dot.style.top=dy+'px';
     requestAnimationFrame(tick);
   })();
@@ -43,6 +46,8 @@
   });
 
   function spaNavigate(url,push){
+    spaNav=true;
+    if(hasMoved)sessionStorage.setItem('prxy-cursor',JSON.stringify({x:mx,y:my}));
     magTarget=null;dot.classList.remove('hover');
     var ld=document.getElementById('prxyLoader');if(ld){ld.classList.remove('out');ld.style.display='flex'}
     setTimeout(function(){
@@ -54,6 +59,7 @@
         for(var i=1;i<oldS.length;i++)oldS[i].remove();
         var newS=doc.head.querySelectorAll('style');
         for(var i=1;i<newS.length;i++)document.head.appendChild(newS[i]);
+        if(dot.parentNode)dot.parentNode.removeChild(dot);
         document.body.innerHTML='';
         var nodes=doc.body.childNodes;
         while(nodes.length){document.body.appendChild(nodes[0])}
@@ -64,6 +70,8 @@
           else s.textContent=old.textContent;
           old.parentNode.replaceChild(s,old);
         });
+        document.body.appendChild(dot);dot.style.left=dx+'px';dot.style.top=dy+'px';
+        spaNav=false;
         if(push)history.pushState(null,'',url);
         var hash=url.split('#')[1];
         if(hash){var el=document.getElementById(hash);if(el)el.scrollIntoView()}
@@ -90,14 +98,13 @@
 </script>
 <title>SERVICES — PRXY.STUDIO</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 @font-face{font-family:'GT Pressura Mono';src:url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff2') format('woff2'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff') format('woff'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
   background:#fbfbfb;
-  color:#1a1a1a;
+  color:#111;
   font:500 15px/1.5 'GT Pressura Mono',monospace;
   -webkit-font-smoothing:antialiased;
   text-transform:uppercase;
@@ -105,9 +112,9 @@ body{
   overflow-x:hidden;
 }
 
-::selection{background:#1a1a1a;color:#fff}
+::selection{background:#111;color:#fff}
 a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
-button,input,select,textarea{font:inherit;text-transform:uppercase;color:#1a1a1a}
+button,input,select,textarea{font:inherit;text-transform:uppercase;color:#111}
 
 @keyframes sealMorph{
   0%,100%{rx:0;ry:0;transform:rotate(0deg)}
@@ -158,18 +165,18 @@ nav{
   flex-shrink:0;
   animation:morph 4s ease-in-out infinite;
 }
-.nav-r{font-size:15px;letter-spacing:0;opacity:.25;transition:opacity .2s}
-.nav-r:hover{opacity:1}
-.nav-r.active{opacity:1}
+.nav-r{font-size:15px;letter-spacing:0;color:#8e8e8e;transition:color .2s}
+.nav-r:hover{color:#111}
+.nav-r.active{color:#111}
 .nav-cart{position:relative;display:flex;align-items:center;height:24px;transition:opacity .2s}
 .nav-cart svg{display:block;opacity:.35;transition:opacity .2s}
 .nav-cart:hover svg{opacity:1}
 .cart-badge{position:absolute;top:-6px;right:-8px;background:#FF4D2A;color:#fff;font-size:9px;min-width:14px;height:14px;border-radius:50%;display:none;align-items:center;justify-content:center;line-height:1;letter-spacing:0}
 .cart-badge.show{display:flex}
 .nav-lang-wrap{display:flex;gap:6px;align-items:center}
-.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;opacity:.25;cursor:pointer;transition:opacity .2s}
-.lang-btn:hover{opacity:.6}
-.lang-btn.on{opacity:1}
+.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;color:#8e8e8e;cursor:pointer;transition:color .2s}
+.lang-btn:hover{color:#555}
+.lang-btn.on{color:#111}
 
 .cx{max-width:520px;margin:0 auto}
 
@@ -187,33 +194,33 @@ section.v{opacity:1;transform:none}
 section{text-align:center}
 
 /* LABEL */
-.lb{font-size:11px;letter-spacing:.2em;opacity:.3;margin-bottom:24px}
+.lb{font-size:11px;letter-spacing:.2em;color:#8e8e8e;margin-bottom:24px}
 
 /* BLOCKS */
 .bk{margin-bottom:60px}
 .bk:last-child{margin-bottom:0}
 .bk-t{letter-spacing:0;margin-bottom:8px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.ico{display:block;width:1.2em;height:1.2em;flex-shrink:0;color:#1a1a1a;opacity:.4}
-.bk-d{opacity:.4;line-height:1.4;letter-spacing:0}
+
+.bk-d{color:#8e8e8e;line-height:1.4;letter-spacing:0}
 
 .foot-line{margin-top:80px;letter-spacing:0}
 
 /* DIAGNOSIS */
 .dx{margin-bottom:24px;letter-spacing:0;line-height:1.4}
-.dx-f{opacity:.2;margin-top:60px;letter-spacing:0}
+.dx-f{color:#8e8e8e;margin-top:60px;letter-spacing:0}
 
 /* SERVICES */
 .sv{margin-bottom:60px}
 .sv:last-child{margin-bottom:0}
-.sv-n{opacity:.2;margin-bottom:12px;letter-spacing:0}
+.sv-n{color:#8e8e8e;margin-bottom:12px;letter-spacing:0}
 .sv-t{letter-spacing:0;margin-bottom:4px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.sv-d{opacity:.4;line-height:1.4;letter-spacing:0;margin-bottom:8px}
+.sv-d{color:#8e8e8e;line-height:1.4;letter-spacing:0;margin-bottom:8px}
 .sv-p{letter-spacing:0}
 
 /* FORM */
 #apply{text-align:center}
 .ap-h{letter-spacing:0;margin-bottom:16px}
-.ap-s{opacity:.2;letter-spacing:0;margin-bottom:80px;line-height:1.4}
+.ap-s{color:#8e8e8e;letter-spacing:0;margin-bottom:80px;line-height:1.4}
 
 .fg{margin-bottom:40px}
 .fg select,.fg textarea,.fg input{
@@ -224,12 +231,12 @@ section{text-align:center}
   -webkit-appearance:none;appearance:none;
   transition:border-color .2s;
 }
-.fg select{cursor:pointer;color:rgba(0,0,0,.3)}
-.fg select.hv{color:#1a1a1a}
-.fg select option{background:#fff;color:#1a1a1a}
+.fg select{cursor:pointer;color:#8e8e8e}
+.fg select.hv{color:#111}
+.fg select option{background:#fff;color:#111}
 .fg textarea{resize:none;height:160px;line-height:1.7}
-.fg select:focus,.fg textarea:focus,.fg input:focus{border-bottom-color:#1a1a1a}
-::placeholder{color:rgba(0,0,0,.2);text-transform:uppercase}
+.fg select:focus,.fg textarea:focus,.fg input:focus{border-bottom-color:#111}
+::placeholder{color:#8e8e8e;text-transform:uppercase}
 
 .sub-btn{
   background:#000;color:#fff;border:none;
@@ -247,10 +254,9 @@ section{text-align:center}
   bottom:32px;right:2px;
   font-size:8px;
   letter-spacing:.1em;
-  opacity:.25;
   z-index:5;
   writing-mode:vertical-rl;
-  color:#1a1a1a;
+  color:#8e8e8e;
 }
 
 /* SEAL */
@@ -261,7 +267,7 @@ section{text-align:center}
 .seal{width:190px;height:190px}
 .seal-text{
   font:500 8.5px/1 'GT Pressura Mono',monospace;
-  fill:#1a1a1a;
+  fill:#111;
   letter-spacing:.15em;
   text-transform:uppercase;
 }
@@ -276,7 +282,7 @@ section{text-align:center}
 /* FOOTER */
 footer{
   text-align:center;padding:60px 40px 60px;
-  font-size:15px;letter-spacing:0;opacity:.15;text-transform:uppercase;
+  font-size:15px;letter-spacing:0;color:#8e8e8e;text-transform:uppercase;
 }
 
 /* MOBILE */
@@ -291,16 +297,43 @@ footer{
   footer{padding:80px 20px 40px}
 }
 
+
+/* CART DRAWER */
+.cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.cart-overlay.open{opacity:1;pointer-events:auto}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:100vw;background:#fbfbfb;z-index:201;transform:translateX(100%);transition:transform .35s cubic-bezier(.25,.1,.25,1);display:flex;flex-direction:column}
+.cart-drawer.open{transform:translateX(0)}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-title{font-size:15px;letter-spacing:.08em}
+.cart-close{cursor:pointer;color:#8e8e8e;transition:color .2s;background:none;border:none;font-size:28px;line-height:1;padding:8px}
+.cart-close:hover{color:#111}
+.cart-items{flex:1;overflow-y:auto}
+.cart-item{display:flex;gap:20px;padding:24px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
+.cart-item-img{width:72px;height:72px;object-fit:contain;flex-shrink:0}
+.cart-item-info{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cart-item-name{font-size:15px;letter-spacing:0;margin-bottom:2px}
+.cart-item-size{font-size:15px;letter-spacing:.05em;color:#8e8e8e;margin-bottom:4px}
+.cart-item-price{font-size:15px;letter-spacing:0;color:#8e8e8e}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:40px;font-size:13px;letter-spacing:.05em;color:#8e8e8e}
+.cart-shop-btn{display:block;width:100%;background:#111;color:#fbfbfb;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;text-align:center;margin-top:24px;transition:background .2s}
+.cart-shop-btn:hover{background:#000}
+.cart-footer{padding:24px 16px 40px;border-top:1px solid rgba(0,0,0,.06)}
+.cart-total{display:flex;justify-content:space-between;font-size:15px;letter-spacing:.02em;margin-bottom:24px}
+.checkout-btn{width:100%;background:#111;color:#fbfbfb;border:none;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;cursor:pointer;transition:all .2s}
+.checkout-btn:hover{background:#000}
+.checkout-btn:active{transform:scale(.98)}
+@media(max-width:768px){.cart-drawer{width:100vw}}
+
 </style>
 </head>
 <body>
-<div class="prxy-loader" id="prxyLoader"><div class="prxy-loader-dot"></div></div>
+<script>if(!window.__cg){window.__cg=1;document.addEventListener('mousemove',function(e){if(e.clientX===0&&e.clientY===0){e.stopImmediatePropagation()}},true)}</script><div class="prxy-loader" id="prxyLoader"><div class="prxy-loader-dot"></div></div>
 
 <nav>
   <div class="nav-top">
     <a href="/" class="logo">PRXY<span class="cursor"></span></a>
     <div class="nav-acts">
-      <a href="/shop#bag" class="nav-cart" id="cartToggle">
+      <a href="#" class="nav-cart" id="cartToggle">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         <span class="cart-badge" id="cartCount">0</span>
       </a>
@@ -311,7 +344,7 @@ footer{
     </div>
   </div>
   <div class="nav-links">
-    <a href="/manifesto" class="nav-r" data-es="VISIÓN">VISION</a>
+    <a href="/vision" class="nav-r" data-es="VISIÓN">VISION</a>
     <a href="/process" class="nav-r" data-es="PROCESO">PROCESS</a>
     <a href="/services" class="nav-r active" data-es="SERVICIOS">SERVICES</a>
     <a href="/shop" class="nav-r" data-es="TIENDA">SHOP</a>
@@ -327,32 +360,32 @@ footer{
 <div class="lb" data-es="CON QUI&Eacute;N TRABAJAMOS">WHO WE WORK WITH</div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="star" class="ico"></i><span data-es="INFLUENCERS Y CREADORES">INFLUENCERS & CREATORS</span></div>
+<div class="bk-t"><span data-es="INFLUENCERS Y CREADORES">INFLUENCERS & CREATORS</span></div>
 <div class="bk-d" data-es="TIENES AUDIENCIA PERO<br>NO TIENES MARCA PERSONAL.<br>BUSCAS IDENTIDAD Y DIRECCI&Oacute;N.">YOU HAVE AN AUDIENCE<br>BUT NO PERSONAL BRAND.<br>YOU'RE LOOKING FOR IDENTITY<br>AND DIRECTION.</div>
 </div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="tag" class="ico"></i><span data-es="MARCAS INDEPENDIENTES">INDEPENDENT BRANDS</span></div>
+<div class="bk-t"><span data-es="MARCAS INDEPENDIENTES">INDEPENDENT BRANDS</span></div>
 <div class="bk-d" data-es="EL PRODUCTO EXISTE&lt;br&gt;PERO LA IDENTIDAD NO.&lt;br&gt;BUSCAS VOZ Y AUTORIDAD.">THE PRODUCT EXISTS<br>BUT THE IDENTITY DOESN'T.<br>YOU'RE LOOKING FOR VOICE<br>AND AUTHORITY.</div>
 </div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="music" class="ico"></i><span data-es="ARTISTAS Y M&Uacute;SICOS">ARTISTS & MUSICIANS</span></div>
+<div class="bk-t"><span data-es="ARTISTAS Y M&Uacute;SICOS">ARTISTS & MUSICIANS</span></div>
 <div class="bk-d" data-es="EL SONIDO PROMETE PERO&lt;br&gt;FALTA UN UNIVERSO QUE LO DEFINA.&lt;br&gt;&lt;br&gt;BUSCAS NARRATIVA E IMAGINARIO.">THE SOUND DELIVERS BUT<br>THE UNIVERSE AROUND IT<br>IS MISSING.<br><br>YOU'RE LOOKING FOR<br>NARRATIVE AND IMAGERY.</div>
 </div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="drama" class="ico"></i><span data-es="ACTORES E INT&Eacute;RPRETES">ACTORS & PERFORMERS</span></div>
+<div class="bk-t"><span data-es="ACTORES E INT&Eacute;RPRETES">ACTORS & PERFORMERS</span></div>
 <div class="bk-d" data-es="CONSIGUES PAPELES&lt;br&gt;PERO NO CONSTRUYES NOMBRE.&lt;br&gt;QUIERES QUE TE ELIJAN&lt;br&gt;ANTES DEL CASTING.">YOU BOOK ROLES<br>BUT YOU DON'T BUILD A NAME.<br>YOU WANT TO BE CHOSEN<br>BEFORE THE CASTING CALL.</div>
 </div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="rocket" class="ico"></i><span data-es="EMPRESAS Y STARTUPS">COMPANIES & STARTUPS</span></div>
+<div class="bk-t"><span data-es="EMPRESAS Y STARTUPS">COMPANIES & STARTUPS</span></div>
 <div class="bk-d" data-es="EL PRODUCTO FUNCIONA&lt;br&gt;PERO NADIE LO RECUERDA.&lt;br&gt;BUSCAS ALCANCE Y POSICI&Oacute;N.">THE PRODUCT WORKS<br>BUT NOBODY REMEMBERS IT.<br>YOU'RE LOOKING FOR<br>REACH AND POSITION.</div>
 </div>
 
 <div class="bk">
-<div class="bk-t"><i data-lucide="lightbulb" class="ico"></i><span data-es="CUALQUIERA CONSTRUYENDO ALGO">ANYONE BUILDING SOMETHING</span></div>
+<div class="bk-t"><span data-es="CUALQUIERA CONSTRUYENDO ALGO">ANYONE BUILDING SOMETHING</span></div>
 <div class="bk-d" data-es="LO QUE HACES TIENE VALOR&lt;br&gt;PERO NO TIENE CARA.&lt;br&gt;BUSCAS IDENTIDAD Y DISE&Ntilde;O.">WHAT YOU DO HAS VALUE<br>BUT IT HAS NO FACE.<br>YOU'RE LOOKING FOR<br>IDENTITY AND DESIGN.</div>
 </div>
 </div>
@@ -362,13 +395,13 @@ footer{
 <div class="cx">
 <div class="lb" data-es="DIAGN&Oacute;STICO">DIAGNOSIS</div>
 
-<div class="dx" data-es="TU MARCA TIENE FORMA.&lt;br&gt;PERO NO TIENE FUERZA.">YOUR BRAND HAS SHAPE.<br>BUT IT HAS NO FORCE.</div>
-<div class="dx" data-es="SABES QU&Eacute; VENDES.&lt;br&gt;PERO NO SABES&lt;br&gt;QU&Eacute; REPRESENTAS.">YOU KNOW WHAT YOU SELL.<br>BUT YOU DON'T KNOW<br>WHAT YOU STAND FOR.</div>
-<div class="dx" data-es="TU SONIDO EXISTE.&lt;br&gt;PERO TU IMAGEN&lt;br&gt;A&Uacute;N NO LO REFLEJA.">YOUR SOUND EXISTS.<br>BUT YOUR IMAGE<br>DOESN'T REFLECT IT YET.</div>
+<div class="dx" data-es="TU MARCA TIENE FORMA,&lt;br&gt;PERO NO TIENE FUERZA.">YOUR BRAND HAS SHAPE,<br>BUT IT HAS NO FORCE.</div>
+<div class="dx" data-es="SABES QU&Eacute; VENDES,&lt;br&gt;PERO NO SABES&lt;br&gt;QU&Eacute; REPRESENTAS.">YOU KNOW WHAT YOU SELL,<br>BUT YOU DON'T KNOW<br>WHAT YOU STAND FOR.</div>
+<div class="dx" data-es="TU SONIDO EXISTE,&lt;br&gt;PERO TU IMAGEN&lt;br&gt;A&Uacute;N NO LO REFLEJA.">YOUR SOUND EXISTS,<br>BUT YOUR IMAGE<br>DOESN'T REFLECT IT YET.</div>
 <div class="dx" data-es="ACT&Uacute;AS&hellip;&lt;br&gt;PERO NO CONTROLAS&lt;br&gt;LA HISTORIA.">YOU ACT&hellip;<br>BUT YOU DON'T<br>CONTROL THE STORY.</div>
-<div class="dx" data-es="TIENES AUDIENCIA.&lt;br&gt;PERO NO TIENES&lt;br&gt;AUTORIDAD.">YOU HAVE AN AUDIENCE.<br>BUT YOU DON'T<br>HAVE AUTHORITY.</div>
-<div class="dx" data-es="PRODUCES CONTENIDO.&lt;br&gt;PERO NADIE LO RECUERDA.">YOU CREATE CONTENT.<br>BUT NOBODY REMEMBERS IT.</div>
-<div class="dx-f" data-es="ESO NO ES UN PROBLEMA DE CONTENIDO.&lt;br&gt;ES UN PROBLEMA DE IDENTIDAD.&lt;br&gt;ES UN PROBLEMA DE DISE&Ntilde;O.">THAT'S NOT A CONTENT PROBLEM.<br>IT'S AN IDENTITY PROBLEM.<br>IT'S A DESIGN PROBLEM.</div>
+<div class="dx" data-es="TIENES AUDIENCIA,&lt;br&gt;PERO NO TIENES&lt;br&gt;AUTORIDAD.">YOU HAVE AN AUDIENCE,<br>BUT YOU DON'T HAVE<br>AUTHORITY.</div>
+<div class="dx" data-es="PRODUCES CONTENIDO,&lt;br&gt;PERO NADIE LO RECUERDA.">YOU CREATE CONTENT,<br>BUT NOBODY REMEMBERS IT.</div>
+<div class="dx-f" data-es="ES UN PROBLEMA DE IDENTIDAD.&lt;br&gt;ES UN PROBLEMA DE DISE&Ntilde;O.">IT'S AN IDENTITY PROBLEM.<br>IT'S A DESIGN PROBLEM.</div>
 </div>
 </section>
 
@@ -377,17 +410,17 @@ footer{
 <div class="lb" data-es="QU&Eacute; HACEMOS">WHAT WE DO</div>
 
 <div class="sv">
-<div class="sv-t"><i data-lucide="compass" class="ico"></i><span data-es="DIRECCI&Oacute;N CREATIVA">CREATIVE DIRECTION</span></div>
+<div class="sv-t"><span data-es="DIRECCI&Oacute;N CREATIVA">CREATIVE DIRECTION</span></div>
 <div class="sv-d" data-es="REDEFINIMOS LA DIRECCI&Oacute;N DE TU PROYECTO.&lt;br&gt;QU&Eacute; DECIR, C&Oacute;MO DECIRLO,&lt;br&gt;Y QU&Eacute; DEJAR DE DECIR.">WE REDEFINE YOUR PROJECT'S DIRECTION.<br>WHAT TO SAY, HOW TO SAY IT,<br>AND WHAT TO STOP SAYING.</div>
 </div>
 
 <div class="sv">
-<div class="sv-t"><i data-lucide="target" class="ico"></i><span data-es="IDENTIDAD Y ESTRATEGIA">IDENTITY & STRATEGY</span></div>
+<div class="sv-t"><span data-es="IDENTIDAD Y ESTRATEGIA">IDENTITY & STRATEGY</span></div>
 <div class="sv-d" data-es="DEFINIMOS JUNTOS&lt;br&gt;QUI&Eacute;N ERES&lt;br&gt;Y POR QU&Eacute; IMPORTAS.&lt;br&gt;&lt;br&gt;POSICI&Oacute;N, NARRATIVA, SISTEMA VISUAL.&lt;br&gt;TODO LO QUE HACE QUE TE RECONOZCAN&lt;br&gt;ANTES DE QUE HABLES.">WE DEFINE TOGETHER<br>WHO YOU ARE<br>AND WHY YOU MATTER.<br><br>POSITION, NARRATIVE, VISUAL SYSTEM.<br>EVERYTHING THAT MAKES YOU<br>RECOGNIZED BEFORE YOU SPEAK.</div>
 </div>
 
 <div class="sv">
-<div class="sv-t"><i data-lucide="zap" class="ico"></i><span data-es="SESI&Oacute;N ESTRAT&Eacute;GICA">STRATEGY SESSION</span></div>
+<div class="sv-t"><span data-es="SESI&Oacute;N ESTRAT&Eacute;GICA">STRATEGY SESSION</span></div>
 <div class="sv-d" data-es="UNA CONVERSACI&Oacute;N&lt;br&gt;QUE REDEFINE EL RUMBO.&lt;br&gt;PARA LOS QUE NECESITAN DIRECCI&Oacute;N,&lt;br&gt;NO M&Aacute;S OPINIONES.">ONE CONVERSATION<br>THAT REDEFINES THE COURSE.<br>FOR THOSE WHO NEED DIRECTION,<br>NOT MORE OPINIONS.</div>
 </div>
 </div>
@@ -436,22 +469,41 @@ footer{
 <path id="arcTR" d="M 109,-4 A 104,104 0 0,1 180,167" fill="none"/>
 <path id="arcBL" d="M 91,204 A 104,104 0 0,1 20,33" fill="none"/>
 </defs>
-<circle cx="100" cy="100" r="118" stroke="#1a1a1a" stroke-width=".9" fill="none"/>
-<circle cx="100" cy="100" r="96" stroke="#1a1a1a" stroke-width=".9"/>
-<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#1a1a1a" stroke-width=".7"/>
-<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#1a1a1a" stroke-width=".7"/>
-<line x1="4" y1="100" x2="196" y2="100" stroke="#1a1a1a" stroke-width=".7"/>
-<line x1="100" y1="4" x2="100" y2="196" stroke="#1a1a1a" stroke-width=".7"/>
+<circle cx="100" cy="100" r="118" stroke="#111" stroke-width=".9" fill="none"/>
+<circle cx="100" cy="100" r="96" stroke="#111" stroke-width=".9"/>
+<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#111" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#111" stroke-width=".7"/>
+<line x1="4" y1="100" x2="196" y2="100" stroke="#111" stroke-width=".7"/>
+<line x1="100" y1="4" x2="100" y2="196" stroke="#111" stroke-width=".7"/>
 <rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
 <text class="seal-text"><textPath href="#arcTR" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
 <text class="seal-text"><textPath href="#arcBL" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
-<path d="M -2,67 A 107,107 0 0,1 93,-7" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
-<path d="M 202,133 A 107,107 0 0,1 108,207" stroke="#1a1a1a" stroke-width=".7" fill="none"/>
+<path d="M -2,67 A 107,107 0 0,1 93,-7" stroke="#111" stroke-width=".7" fill="none"/>
+<path d="M 202,133 A 107,107 0 0,1 108,207" stroke="#111" stroke-width=".7" fill="none"/>
 </svg>
+</div>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title" data-es="TU CESTA">YOUR BAG</div>
+    <button class="cart-close" id="cartClose">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty" id="cartEmpty"><span data-es="VACÍA">EMPTY</span><a href="/shop" class="cart-shop-btn" data-es="VER TIENDA">SEE SHOP</a></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span data-es="TOTAL">TOTAL</span>
+      <span id="cartTotal">€0</span>
+    </div>
+    <a href="/shop" class="checkout-btn" data-es="IR A LA TIENDA">GO TO SHOP</a>
+  </div>
 </div>
 
 <footer>PRXY<br><span id="yr"></span></footer>
@@ -502,6 +554,34 @@ footer{
   updateCartBadge();
   window.addEventListener('storage',function(e){if(e.key==='prxy-cart')updateCartBadge()});
 
+  // ── Cart drawer ──
+  function getCart(){try{return JSON.parse(localStorage.getItem('prxy-cart')||'[]')}catch(e){return[]}}
+  function renderCartDrawer(){
+    var cart=getCart();var items=document.getElementById('cartItems');var empty=document.getElementById('cartEmpty');
+    var footer=document.getElementById('cartFooter');var total=document.getElementById('cartTotal');
+    if(!items)return;
+    items.querySelectorAll('.cart-item').forEach(function(el){el.remove()});
+    if(cart.length===0){empty.style.display='flex';footer.style.display='none';return}
+    empty.style.display='none';footer.style.display='block';
+    var sum=0;
+    cart.forEach(function(item){
+      sum+=(item.price||0)*(item.qty||1);
+      var d=document.createElement('div');d.className='cart-item';
+      d.innerHTML='<img class="cart-item-img" src="'+(item.img||'')+'" alt="">'
+        +'<div class="cart-item-info"><div class="cart-item-name">'+item.name+'</div>'
+        +(item.size?'<div class="cart-item-size">'+item.size+'</div>':'')
+        +'<div class="cart-item-price">€'+item.price+'</div></div>';
+      items.appendChild(d);
+    });
+    total.textContent='€'+sum;
+  }
+  function openCart(){renderCartDrawer();document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartDrawer').classList.add('open');document.body.style.overflow='hidden'}
+  function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow=''}
+  document.getElementById('cartToggle').addEventListener('click',function(e){e.preventDefault();openCart()});
+  document.getElementById('cartOverlay').addEventListener('click',closeCart);
+  document.getElementById('cartClose').addEventListener('click',closeCart);
+
+
   // ── Section reveal on scroll ──
   var ss=document.querySelectorAll('section');
   var so=new IntersectionObserver(function(ee){
@@ -539,9 +619,19 @@ footer{
       alert('Error sending — please try again.');
     });
   });
-  if(window.lucide)lucide.createIcons();
+
   setTimeout(function(){var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}},800)
 })();
+</script>
+<script>
+setTimeout(function(){
+  var sp=sessionStorage.getItem('prxy-cursor');if(!sp)return;
+  try{var pp=JSON.parse(sp);
+  document.dispatchEvent(new MouseEvent('mousemove',{clientX:pp.x,clientY:pp.y,bubbles:true}));
+  var dot=document.querySelector('.dot-cursor');if(!dot)return;
+  var n=0;(function f(){dot.style.left=pp.x+'px';dot.style.top=pp.y+'px';if(++n<10)requestAnimationFrame(f)})()
+  }catch(e){}
+},100);
 </script>
 </body>
 </html>

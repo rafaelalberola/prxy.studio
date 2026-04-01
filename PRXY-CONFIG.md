@@ -53,7 +53,7 @@
 
 ## Website Structure
 - `/` — Landing: hook phrase + CTA "READ MANIFESTO"
-- `/manifesto` — Full manifesto with staggered reveal + email capture
+- `/vision` — Full manifesto with staggered reveal + email capture
 - `/case` — Case study (CASE 001)
 - **Language toggle:** EN/ES, persists via localStorage across all pages
 - **Navigation:** All inner pages have BACK button to `/`

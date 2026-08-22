@@ -3,3 +3,8 @@ dist
 .vite
 .DS_Store
 out/
+.env
+.env.*
+
+# Documento de cliente, no se publica
+lydia-brand-doc.html

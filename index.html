@@ -96,22 +96,54 @@
   window.addEventListener('popstate',function(){spaNavigate(location.href,false)});
 })();
 </script>
-<title>PRXY.STUDIO</title>
+<title>PRXY.STUDIO | ENCUENTRA TU VOZ CREATIVA</title>
+<meta name="description" content="Tu voz creativa ya existe. Te ayudo a descubrirla. Sesiones 1 a 1 para creativos atascados.">
+<link rel="canonical" href="https://prxy.studio/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://prxy.studio/">
+<meta property="og:title" content="PRXY.STUDIO | Encuentra tu voz creativa">
+<meta property="og:description" content="Tu voz creativa ya existe. Te ayudo a descubrirla.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
 @font-face{font-family:'GT Pressura Mono';src:url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff2') format('woff2'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.woff') format('woff'),url('/fonts/gt-pressura/226f58ab113a6d821def90a7d6dc2427.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 *{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
 
 body{
   background:#fbfbfb;
-  color:#111;
+  color:#939393;
   font:500 15px/1.5 'GT Pressura Mono',monospace;
   -webkit-font-smoothing:antialiased;
   text-transform:uppercase;
   letter-spacing:-0.02em;
 }
 
-::selection{background:#111;color:#fff}
+/* Homogeneidad de linea en TODO el texto */
+p,div,h1,h2,h3,li,span,a{text-wrap:balance}
+
+/* ─── JERARQUÍA DE TEXTO: dos tonos, una regla ───
+   #000     NEGRO — títulos, tesis de sección, keywords que abren cada idea,
+                   precios y acciones. Es el mapa: leyendo solo el negro
+                   se recorre la propuesta entera.
+   #939393 GRIS  — el cuerpo. Todo lo que desarrolla, matiza y explica.
+   Cada bloque abre en negro y continúa en gris. El contraste marca dónde
+   empieza una idea, no cuál importa más. */
+
+::selection{background:#FF4D2A;color:#fff}
+
+/* Sin seleccion de texto ni arrastre de imagenes.
+   Es disuasion, no proteccion: el contenido sigue siendo publico en el fuente. */
+body{
+  -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+}
+img,svg{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+a img,a svg{pointer-events:auto}
+/* Los campos del formulario tienen que seguir siendo usables */
+input,textarea,select,[contenteditable]{
+  -webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;
+}
 a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
 
 @keyframes morph{
@@ -120,101 +152,243 @@ a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
   50%{border-radius:50%;transform:rotate(180deg) scale(.7)}
   75%{border-radius:50%;transform:rotate(270deg) scale(.7)}
 }
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sealMorph{
+  0%,100%{rx:0;ry:0;transform:rotate(0deg)}
+  25%{rx:0;ry:0;transform:rotate(90deg)}
+  50%{rx:6.25px;ry:6.25px;transform:rotate(180deg) scale(.7)}
+  75%{rx:6.25px;ry:6.25px;transform:rotate(270deg) scale(.7)}
+}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(7px);opacity:1}}
 
-.prxy-loader{
-  position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;
-  background:#fbfbfb;
-  display:flex;align-items:center;justify-content:center;
-  transition:opacity .3s ease;
-}
+.prxy-loader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#fbfbfb;display:flex;align-items:center;justify-content:center;transition:opacity .3s ease}
 .prxy-loader.out{opacity:0;pointer-events:none}
-.prxy-loader-dot{
-  width:12px;height:12px;
-  background:#FF4D2A;
-  animation:morph 4s ease-in-out infinite;
-}
+.prxy-loader-dot{width:12px;height:12px;background:#FF4D2A;animation:morph 4s ease-in-out infinite}
 
 /* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:10;
   display:flex;justify-content:space-between;align-items:center;
-  padding:40px;
-  background:rgba(251,251,251,.5);
-  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  padding:28px 40px;
+  background:rgba(251,251,251,.72);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
 .nav-top{display:flex;justify-content:space-between;align-items:center;width:100%}
 .nav-acts{display:flex;gap:24px;align-items:center;height:24px}
-.logo{letter-spacing:0;font-size:15px}
-.nav-cart{position:relative;display:flex;align-items:center;height:24px;transition:opacity .2s}
-.nav-cart svg{display:block;opacity:.35;transition:opacity .2s}
-.nav-cart:hover svg{opacity:1}
-.cart-badge{position:absolute;top:-6px;right:-8px;background:#FF4D2A;color:#fff;font-size:9px;min-width:14px;height:14px;border-radius:50%;display:none;align-items:center;justify-content:center;line-height:1;letter-spacing:0}
-.cart-badge.show{display:flex}
-.cursor{
-  display:inline-block;
-  width:10px;height:10px;
-  background:#FF4D2A;
-  margin-left:6px;
-  vertical-align:middle;
-  margin-bottom:2px;
-  animation:morph 4s ease-in-out infinite;
-}
+.logo{color:#000;letter-spacing:0;font-size:15px;display:flex;align-items:center}
+.cursor{display:block;width:10px;height:10px;background:#FF4D2A;margin-left:6px;flex-shrink:0;animation:morph 4s ease-in-out infinite}
 .nav-lang-wrap{display:flex;gap:6px;align-items:center;height:24px}
-.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;color:#8e8e8e;cursor:pointer;transition:color .2s}
-.lang-btn:hover{color:#555}
-.lang-btn.on{color:#111}
+.lang-btn{font-size:15px;letter-spacing:0;line-height:24px;color:#939393;cursor:pointer;transition:color .2s}
+.lang-btn:hover{color:#000}
+.lang-btn.on{color:#000}
 
-/* INTRO */
+/* ── HERO ── */
 #intro{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:120px 40px;
+  min-height:86vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:150px 40px 60px;
   text-align:center;
+  position:relative;
 }
+.intro-kicker{
+  font-size:11px;letter-spacing:.24em;color:#2C942C;
+  margin-bottom:32px;opacity:0;transition:opacity .6s ease;
+}
+.intro-kicker.v{opacity:1}
 .intro-title{
-  font-size:15px;
-  line-height:1.7;
-  letter-spacing:0;
-  opacity:0;
-  transform:translateY(4px);
+  color:#000;font-size:24px;line-height:1.4;letter-spacing:-.03em;
+  max-width:none;white-space:nowrap;margin:0 auto;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.intro-title.v{opacity:1;transform:none}
+.intro-sub{
+  font-size:15px;line-height:1.7;letter-spacing:0;color:#939393;
+  margin:26px auto 0;max-width:58ch;
+  opacity:0;transition:opacity .6s ease;
+}
+.intro-sub.v{opacity:1}
+.btn{
+  display:inline-block;background:#000;color:#fbfbfb;border:none;
+  font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;
+  cursor:pointer;padding:14px 34px;border-radius:100px;
+  transition:background .2s,transform .2s;
+}
+.btn:hover{background:#2b2b2b;transform:translateY(-1px)}
+.intro-btn{margin-top:44px;opacity:0;transition:opacity .6s ease}
+.intro-btn.v{opacity:1}
+.scroll-hint{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:.2em;color:#939393;
+  opacity:0;transition:opacity .8s ease;
+}
+.scroll-hint.v{opacity:1}
+.scroll-hint .arw{display:block;color:#000;animation:bob 1.8s ease-in-out infinite}
+
+/* ── SECTIONS ── */
+.cx{max-width:620px;margin:0 auto}
+.cx-wide{max-width:1000px;margin:0 auto}
+section{
+  padding:100px 40px;
+  text-align:center;
+  opacity:0;transform:translateY(8px);
   transition:opacity .6s ease,transform .6s ease;
 }
-.intro-title.v{opacity:1;transform:translateY(0)}
-.intro-btn{
-  display:inline-block;
-  background:#000;color:#fff;border:none;
-  font:inherit;text-transform:uppercase;
-  font-size:15px;letter-spacing:0;
-  cursor:pointer;
-  padding:6px 16px;
-  border-radius:100px;
-  margin-top:60px;
-  opacity:0;
-  transition:opacity .6s ease;
-}
-.intro-btn.v{opacity:1}
-.intro-btn:hover{opacity:.7}
+section.v{opacity:1;transform:none}
+.rule{width:56px;height:1px;background:rgba(0,0,0,.14);margin:0 auto}
 
-/* SERIAL */
-.serial{
-  position:fixed;
-  bottom:32px;right:2px;
-  font-size:8px;
-  letter-spacing:.1em;
-  z-index:5;
-  writing-mode:vertical-rl;
-  color:#8e8e8e;
+.lb{font-size:11px;letter-spacing:.24em;color:#939393;margin-bottom:14px}
+.avatar{
+  width:90px;height:90px;border-radius:50%;
+  object-fit:cover;display:block;margin:0 auto 24px;
+  border:1px solid rgba(0,0,0,.08);
+  filter:grayscale(1);
+}
+.sec-h{font-size:15px;line-height:1.65;letter-spacing:0;color:#000;margin-bottom:56px;max-width:40ch;margin-left:auto;margin-right:auto}
+
+/* puente narrativo entre secciones */
+.note{
+  font-size:13px;line-height:1.7;letter-spacing:.02em;color:#939393;
+  max-width:50ch;margin:48px auto 0;padding-top:26px;
+  border-top:1px solid rgba(0,0,0,.09);
+}
+.bridge{
+  font-size:15px;letter-spacing:.02em;color:#939393;line-height:1.6;
+  margin-top:56px;max-width:52ch;margin-left:auto;margin-right:auto;
+}
+.bridge b{color:#000;font-weight:500}
+
+/* sintomas */
+.sym{display:grid;max-width:620px;margin:0 auto;text-align:center}
+.sym-i{padding:0 20px 40px;line-height:1.65;letter-spacing:0;display:block;max-width:46ch;margin:0 auto}
+.sym-i:last-child{padding-bottom:0}
+.sym-i s{color:#000;text-decoration:none;font-size:10px;line-height:1;display:inline-block;vertical-align:baseline;position:relative;top:-.28em;margin-right:10px}
+.sym-i span{display:inline}
+.sym-i b,.stp-t b,.tl-i b{color:#000;font-weight:500}
+
+/* pasos numerados */
+.stp{display:grid;gap:0;max-width:620px;margin:0 auto;text-align:center}
+.stp-i{display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 0 46px}
+.stp-i:last-child{padding-bottom:0}
+.stp-n{font-size:11px;letter-spacing:.18em;color:#000;flex-shrink:0}
+.stp-t{line-height:1.65;letter-spacing:0;max-width:50ch}
+
+/* timeline quien soy */
+.tl{max-width:620px;margin:0 auto;text-align:center}
+.tl-i{padding:0 0 30px;line-height:1.65;letter-spacing:0;color:#939393;max-width:52ch;margin:0 auto}
+.tl-i:last-child{padding-bottom:0}
+.tl-i.on{color:#000}
+.lnk{color:#000;text-decoration:underline;text-decoration-style:dotted;text-decoration-thickness:1px;text-decoration-color:#939393;text-underline-offset:3px;transition:text-decoration-color .2s}
+.lnk:hover{text-decoration-color:#000}
+
+/* ── PRICING CARDS ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch;text-align:left}
+.card{
+  border:1px solid rgba(0,0,0,.12);
+  padding:30px 26px 26px;
+  display:flex;flex-direction:column;
+  background:#fff;
+  transition:border-color .2s,transform .2s;
+}
+.card:hover{border-color:#000;transform:translateY(-3px)}
+.card.lead{border-color:#000}
+.card-tag{font-size:10px;letter-spacing:.18em;color:#939393;margin-bottom:18px;height:12px}
+.card-t{font-size:15px;letter-spacing:0;line-height:1.35;color:#000;margin-bottom:6px}
+.card-dur{font-size:11px;letter-spacing:.12em;color:#939393;margin-bottom:22px}
+.card-p{font-size:19px;color:#000;letter-spacing:-.02em;margin-bottom:22px}
+.card-p.free{color:#000}
+.card-tag.ahorro{color:#939393}
+.card-d{font-size:13px;line-height:1.6;letter-spacing:0;color:#939393;margin-bottom:30px;flex:1}
+.card-b{
+  display:block;text-align:center;
+  border:1px solid rgba(0,0,0,.15);
+  font-size:15px;letter-spacing:.06em;padding:14px 0;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.card-b:hover{background:#000;color:#fbfbfb;border-color:#000}
+.card.lead .card-b{background:#000;color:#fbfbfb;border-color:#000}
+.card.lead .card-b:hover{background:#2b2b2b;border-color:#2b2b2b}
+
+/* no es para ti */
+.nofit{margin-top:64px;font-size:15px;line-height:1.65;letter-spacing:0;color:#939393;max-width:52ch;margin-left:auto;margin-right:auto}
+.nofit b{color:#000;font-weight:500;display:block;margin-bottom:8px;letter-spacing:.14em;font-size:11px}
+
+/* cierre */
+#closing{padding-bottom:110px}
+.cl{font-size:15px;line-height:1.65;letter-spacing:0;color:#000;margin-bottom:36px;max-width:38ch;margin-left:auto;margin-right:auto}
+.cl-s{font-size:15px;color:#939393;letter-spacing:.02em;margin-bottom:40px}
+
+
+.seal-wrap{display:flex;justify-content:center;padding:80px 40px 0}
+.seal{width:150px;height:150px}
+.seal-text{font:500 8.5px/1 'GT Pressura Mono',monospace;fill:#000;letter-spacing:.15em;text-transform:uppercase}
+.seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
+
+footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;color:#939393;text-transform:uppercase}
+.foot-shop{display:block;margin-top:22px;font-size:11px;letter-spacing:.2em;color:#939393;transition:color .2s}
+.foot-shop:hover{color:#000}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .cards{grid-template-columns:1fr;gap:14px}
+}
+@media(max-width:768px){
+  nav{padding:20px}
+  #intro{padding:130px 24px 130px;min-height:88vh}
+  .scroll-hint{bottom:44px}
+  .intro-title{font-size:15px;white-space:nowrap;max-width:none}
+  section{padding:80px 24px}
+  .sec-h{font-size:15px}
+  .cl{font-size:15px}
+  .cx,.cx-wide{max-width:100%}
+  .sym-i{padding:0 4px 34px}
+  footer{padding:60px 24px 40px}
 }
 
-/* MOBILE */
-@media(max-width:600px){
-  nav{padding:24px 20px}
-  #intro{padding:100px 20px}
+/* ── MODAL DE RESERVA ── */
+.bk-ov{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(17,17,17,.55);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+  display:flex;align-items:center;justify-content:center;padding:32px;
 }
-
+.bk-ov.open{opacity:1;pointer-events:auto}
+.bk-modal{
+  position:relative;width:100%;max-width:1020px;height:min(760px,86vh);
+  background:#fbfbfb;display:flex;flex-direction:column;
+  transform:translateY(10px);transition:transform .25s ease;
+}
+.bk-ov.open .bk-modal{transform:none}
+.bk-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.08);flex-shrink:0;
+}
+.bk-name{font-size:11px;letter-spacing:.24em;color:#939393}
+.bk-x{
+  background:none;border:none;cursor:pointer;color:#939393;
+  font:inherit;font-size:24px;line-height:1;padding:4px 8px;transition:color .2s;
+}
+.bk-x:hover{color:#000}
+.bk-body{flex:1;position:relative;overflow:hidden;padding:28px 0 34px;background:#fff}
+.bk-body iframe{width:100%;height:100%;border:0;display:block}
+.bk-fall{
+  position:absolute;inset:28px 0 34px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;text-align:center;
+  padding:40px;font-size:13px;line-height:1.7;color:#939393;
+}
+.bk-load{
+  position:absolute;inset:28px 0 34px;display:flex;align-items:center;justify-content:center;
+  background:#fbfbfb;transition:opacity .3s ease;
+}
+.bk-load.gone{opacity:0;pointer-events:none}
+.bk-load i{width:12px;height:12px;background:#FF4D2A;animation:morph 4s ease-in-out infinite;display:block}
+@media(max-width:768px){
+  .bk-ov{padding:0}
+  .bk-modal{max-width:100%;height:100%}
+  .bk-body{padding:16px 0 20px}
+  .bk-load,.bk-fall{inset:16px 0 20px}
+}
 
 /* CART DRAWER */
 .cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease}
@@ -223,28 +397,33 @@ nav{
 .cart-drawer.open{transform:translateX(0)}
 .cart-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
 .cart-title{font-size:15px;letter-spacing:.08em}
-.cart-close{cursor:pointer;color:#8e8e8e;transition:color .2s;background:none;border:none;font-size:28px;line-height:1;padding:8px}
-.cart-close:hover{color:#111}
+.cart-close{cursor:pointer;color:#939393;transition:color .2s;background:none;border:none;font-size:28px;line-height:1;padding:8px}
+.cart-close:hover{color:#000}
 .cart-items{flex:1;overflow-y:auto}
 .cart-item{display:flex;gap:20px;padding:24px 16px;border-bottom:1px solid rgba(0,0,0,.06)}
 .cart-item-img{width:72px;height:72px;object-fit:contain;flex-shrink:0}
 .cart-item-info{flex:1;display:flex;flex-direction:column;justify-content:center}
 .cart-item-name{font-size:15px;letter-spacing:0;margin-bottom:2px}
-.cart-item-size{font-size:15px;letter-spacing:.05em;color:#8e8e8e;margin-bottom:4px}
-.cart-item-price{font-size:15px;letter-spacing:0;color:#8e8e8e}
-.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:40px;font-size:13px;letter-spacing:.05em;color:#8e8e8e}
-.cart-shop-btn{display:block;width:calc(100% - 48px);background:#111;color:#fbfbfb;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:24px 0;text-align:center;margin:24px;transition:background .2s;text-decoration:none}
+.cart-item-size{font-size:15px;letter-spacing:.05em;color:#939393;margin-bottom:4px}
+.cart-item-price{font-size:15px;letter-spacing:0;color:#939393}
+.cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;padding-top:40px;font-size:13px;letter-spacing:.05em;color:#939393}
+.cart-shop-btn{display:block;width:calc(100% - 48px);background:#000;color:#fbfbfb;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:24px 0;text-align:center;margin:24px;transition:background .2s;text-decoration:none}
 .cart-shop-btn:hover{background:#000}
 .cart-footer{padding:24px 16px 40px;border-top:1px solid rgba(0,0,0,.06)}
 .cart-total{display:flex;justify-content:space-between;font-size:15px;letter-spacing:.02em;margin-bottom:24px}
-.checkout-btn{width:100%;background:#111;color:#fbfbfb;border:none;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;cursor:pointer;transition:all .2s}
+.checkout-btn{width:100%;background:#000;color:#fbfbfb;border:none;font:inherit;text-transform:uppercase;font-size:13px;letter-spacing:.08em;padding:18px 0;cursor:pointer;transition:all .2s;display:block;text-align:center}
 .checkout-btn:hover{background:#000}
-.checkout-btn:active{transform:scale(.98)}
 @media(max-width:768px){.cart-drawer{width:100vw}}
-
 </style>
 </head>
 <body>
+<script>
+(function(){
+  var block = function(e){ if(!e.target.closest('input,textarea,select,[contenteditable],iframe')) e.preventDefault(); };
+  document.addEventListener('contextmenu', block);
+  document.addEventListener('dragstart', function(e){ e.preventDefault(); });
+})();
+</script>
 <script>if(!window.__cg){window.__cg=1;document.addEventListener('mousemove',function(e){if(e.clientX===0&&e.clientY===0){e.stopImmediatePropagation()}},true)}</script>
 <div class="prxy-loader" id="prxyLoader"><div class="prxy-loader-dot"></div></div>
 
@@ -252,7 +431,6 @@ nav{
   <div class="nav-top">
     <a href="/" class="logo">PRXY<span class="cursor"></span></a>
     <div class="nav-acts">
-
       <div class="nav-lang-wrap">
         <a href="#" class="lang-btn" id="langEN">EN</a>
         <a href="#" class="lang-btn" id="langES">ES</a>
@@ -261,17 +439,159 @@ nav{
   </div>
 </nav>
 
-<div class="serial">PRXY-001 / REV.A</div>
 
-<!-- ══════ INTRO ══════ -->
+<!-- ══════ HERO ══════ -->
 <div id="intro">
 <div>
-<div class="intro-title" id="introTitle" data-es="SI TE PIDO QUE NOMBRES<br>TODO LO QUE AMAS,<br>CUÁNTO TARDAS EN<br>NOMBRARTE A TI MISMO?">IF I ASKED YOU TO NAME<br>EVERYTHING YOU LOVE,<br>HOW LONG UNTIL<br>YOU NAME YOURSELF?</div>
-<a href="/vision" class="intro-btn" id="introBtn" data-es="NUESTRA VISIÓN">OUR VISION</a>
+  <div class="intro-kicker" id="introKicker" data-es="SESIONES 1 A 1 · ONLINE">1-ON-1 SESSIONS · ONLINE</div>
+  <div class="intro-title" id="introTitle" data-es="TU VOZ CREATIVA YA EXISTE">YOUR CREATIVE VOICE ALREADY EXISTS</div>
+  <div class="intro-sub" id="introSub" data-es="TODA LA VIDA TE HA DICHO QUÉ HACER, HICISTE CASO Y YA NO SABES QUÉ TE DEFINE. JUNTOS REVISAMOS TU TRABAJO, QUITAMOS EL RUIDO Y DISEÑAMOS TU VOZ.">ALL YOUR LIFE TOLD YOU WHAT TO DO, YOU WENT ALONG WITH IT AND NOW YOU DON'T KNOW WHAT DEFINES YOU. TOGETHER WE GO THROUGH YOUR WORK, CUT THE NOISE AND DESIGN YOUR VOICE.</div>
+  <a href="#reserva" class="btn intro-btn" id="introBtn" data-es="EMPIEZA AHORA">START NOW</a>
 </div>
+<div class="scroll-hint" id="scrollHint"><span data-es="DESLIZA">SCROLL</span><svg class="arw" width="13" height="17" viewBox="0 0 13 17" fill="none" aria-hidden="true"><path d="M6.5 1.2v13.1M1.4 9.4l5.1 5.1 5.1-5.1" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 </div>
 
-<!-- CART -->
+<!-- ══════ 1. SÍNTOMAS ══════ -->
+<section id="sintomas">
+<div class="cx">
+  <div class="lb" data-es="ESTO TE SUENA">SOUND FAMILIAR</div>
+  <div class="sec-h" data-es="NO ES QUE NO TENGAS UNA VOZ PROPIA. ES QUE TODAVÍA NO SABES RECONOCERLA CUANDO LA TIENES DELANTE.">IT IS NOT THAT YOU HAVE NO VOICE OF YOUR OWN. IT IS THAT YOU STILL CAN'T RECOGNISE IT WHEN IT IS RIGHT IN FRONT OF YOU.</div>
+  <div class="sym">
+    <div class="sym-i"><s>&#9679;</s><span data-es="<b>HACES MIL COSAS DIFERENTES</b> Y NO SABES CUÁL DE TODAS ELLAS TE DEFINE."><b>YOU MAKE A THOUSAND DIFFERENT THINGS</b> AND YOU DON'T KNOW WHICH ONE DEFINES YOU.</span></div>
+    <div class="sym-i"><s>&#9679;</s><span data-es="<b>MIRAS TU TRABAJO</b> Y NO TE SIENTES DEL TODO IDENTIFICADO NI CONVENCIDO."><b>YOU LOOK AT YOUR WORK</b> AND YOU DON'T FEEL ENTIRELY IDENTIFIED OR CONVINCED.</span></div>
+    <div class="sym-i"><s>&#9679;</s><span data-es="<b>COPIAS BIEN</b>, LO SUFICIENTE PARA QUE EL TRABAJO FUNCIONE, PERO ESO YA HACE TIEMPO QUE NO TE LLENA."><b>YOU COPY WELL</b>, ENOUGH FOR THE WORK TO LAND, BUT THAT STOPPED BEING ENOUGH A WHILE AGO.</span></div>
+    <div class="sym-i"><s>&#9679;</s><span data-es="<b>EMPIEZAS MIL PROYECTOS</b> Y NO TERMINAS NINGUNO."><b>YOU START A THOUSAND PROJECTS</b> AND YOU FINISH NONE OF THEM.</span></div>
+  </div>
+  <div class="bridge" data-es="SI TE HAS RECONOCIDO EN DOS DE ESTAS, SIGUE LEYENDO. <b>LO QUE BUSCAS NO HAY QUE INVENTARLO</b>, PORQUE YA LO HAS HECHO ALGUNA VEZ SIN DARTE CUENTA.">IF YOU RECOGNISED YOURSELF IN TWO OF THOSE, KEEP READING. <b>WHAT YOU ARE LOOKING FOR DOESN'T NEED INVENTING</b>, BECAUSE YOU HAVE ALREADY MADE IT AT SOME POINT WITHOUT NOTICING.</div>
+</div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ══════ 2. LA SESIÓN ══════ -->
+<section id="sesion">
+<div class="cx">
+  <div class="lb" data-es="LA SESIÓN">THE SESSION</div>
+  <div class="sec-h" data-es="HABLEMOS NOVENTA MINUTOS Y REVISEMOS TU TRABAJO JUNTOS. TE AYUDO A DEFINIR TU VOZ.">LET'S TALK FOR NINETY MINUTES AND GO THROUGH YOUR WORK TOGETHER. I HELP YOU DEFINE YOUR VOICE.</div>
+  <div class="stp">
+    <div class="stp-i"><div class="stp-n">01</div><div class="stp-t" data-es="<b>ME ENSEÑAS TODO LO QUE HACES.</b> INCLUIDO LO QUE NUNCA HAS LLEGADO A PUBLICAR PORQUE NO LO VEÍAS SUFICIENTEMENTE BUENO."><b>YOU SHOW ME EVERYTHING YOU MAKE.</b> INCLUDING THE WORK YOU NEVER PUBLISHED BECAUSE YOU DIDN'T THINK IT WAS GOOD ENOUGH.</div></div>
+    <div class="stp-i"><div class="stp-n">02</div><div class="stp-t" data-es="<b>TE PREGUNTO POR QUÉ HICISTE CADA COSA.</b> CASI NADIE SABE RESPONDER A LA PRIMERA, Y NO PASA NADA, PORQUE JUSTO AHÍ ES DONDE EMPIEZA LO INTERESANTE."><b>I ASK WHY YOU MADE EACH ONE.</b> ALMOST NOBODY ANSWERS STRAIGHT AWAY, AND THAT IS FINE, BECAUSE THAT IS WHERE IT GETS INTERESTING.</div></div>
+    <div class="stp-i"><div class="stp-n">03</div><div class="stp-t" data-es="<b>SEPARAMOS LO TUYO DEL RUIDO.</b> CASI SIEMPRE HAY MÁS DE LO PRIMERO DE LO QUE TÚ CREES."><b>WE SEPARATE WHAT IS YOURS FROM THE NOISE.</b> THERE IS ALMOST ALWAYS MORE OF IT THAN YOU THINK.</div></div>
+    <div class="stp-i"><div class="stp-n">04</div><div class="stp-t" data-es="<b>SALES CON TRES COSAS CONCRETAS.</b> LA FRASE QUE EXPLICA TU TRABAJO, LOS ELEMENTOS QUE YA TE DISTINGUEN, Y QUÉ DEJAR DE HACER PARA QUE SE VEAN MÁS."><b>YOU LEAVE WITH THREE CONCRETE THINGS.</b> THE SENTENCE THAT EXPLAINS YOUR WORK, THE ELEMENTS THAT ALREADY SET YOU APART, AND WHAT TO STOP DOING SO THEY SHOW MORE.</div></div>
+  </div>
+  <div class="bridge" data-es="NO HACE FALTA QUE ME CREAS A LA PRIMERA. <b>TE CUENTO UN POCO MÁS SOBRE MÍ.</b>">YOU DON'T HAVE TO BELIEVE ME STRAIGHT AWAY. <b>LET ME TELL YOU A BIT MORE ABOUT ME.</b></div>
+</div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ══════ 3. QUIÉN SOY ══════ -->
+<section id="quiensoy">
+<div class="cx">
+  <img class="avatar" src="/img/rafa.png" width="90" height="90" alt="Rafa" loading="lazy">
+  <div class="lb" data-es="QUIÉN SOY">WHO I AM</div>
+  <div class="sec-h" data-es="ME PASÉ SEIS AÑOS CONSTRUYENDO ALGO CON LO QUE NO ME SENTÍA IDENTIFICADO, ASÍ QUE ESTO NO TE LO CUENTO DE OÍDAS.">I SPENT SIX YEARS BUILDING SOMETHING I DIDN'T IDENTIFY WITH, SO NONE OF THIS IS SECOND HAND.</div>
+  <div class="tl">
+    <div class="tl-i" data-es="<b>ESTUDIÉ FILOLOGÍA INGLESA.</b> PORQUE TODO EL MUNDO A MI ALREDEDOR REPETÍA QUE EL INGLÉS ERA IMPORTANTE. DESPUÉS UN MÁSTER EN TURISMO, POR LA MISMA RAZÓN: PARECÍA LO SENSATO."><b>I STUDIED ENGLISH PHILOLOGY.</b> BECAUSE EVERYONE AROUND ME KEPT SAYING ENGLISH MATTERED. THEN A MASTER'S IN TOURISM, FOR THE SAME REASON: IT SEEMED SENSIBLE.</div>
+    <div class="tl-i" data-es="<b>SEIS AÑOS DESPUÉS.</b> CUMPLIENDO EXPECTATIVAS QUE NO ERAN MÍAS, SIN HABER TOMADO YO NINGUNA DE LAS DECISIONES IMPORTANTES."><b>SIX YEARS LATER.</b> MEETING EXPECTATIONS THAT WEREN'T MINE, WITHOUT HAVING MADE A SINGLE IMPORTANT DECISION MYSELF.</div>
+    <div class="tl-i" data-es="<b>EMPECÉ DE CERO.</b> LOS PRIMEROS AÑOS FUERON AGENCIAS, SUELDOS MALOS Y JEFES QUE MATABAN CUALQUIER IDEA ANTES DE QUE LLEGARA A NACER."><b>I STARTED FROM SCRATCH.</b> THE FIRST YEARS WERE AGENCIES, BAD PAY AND BOSSES WHO KILLED ANY IDEA BEFORE IT WAS BORN.</div>
+    <div class="tl-i" data-es="<b>DEJÉ DE PEDIR PERMISO.</b> REDISEÑÉ APLICACIONES QUE NADIE ME HABÍA ENCARGADO Y ESTUDIÉ EL OFICIO ENTERO, DISCIPLINA POR DISCIPLINA, HASTA TENER ALGO QUE DEFENDER. ENTONCES SE LAS MANDÉ A LAS EMPRESAS QUE ME INTERESABAN."><b>I STOPPED ASKING PERMISSION.</b> I REDESIGNED APPS NOBODY ASKED ME FOR AND STUDIED THE WHOLE CRAFT, DISCIPLINE BY DISCIPLINE, UNTIL I HAD SOMETHING WORTH DEFENDING. THEN I SENT THEM TO THE COMPANIES I WANTED.</div>
+    <div class="tl-i" data-es="ASÍ ENTRÉ EN <a class=&quot;lnk&quot; href=&quot;https://allfunds.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>ALLFUNDS</a>, JUSTO EL AÑO QUE SALIERON A BOLSA, DISEÑANDO HERRAMIENTAS PARA SIETE BANCOS PRIVADOS.">THAT IS HOW I GOT INTO <a class="lnk" href="https://allfunds.com" target="_blank" rel="noopener">ALLFUNDS</a>, THE VERY YEAR THEY WENT PUBLIC, DESIGNING TOOLS FOR SEVEN PRIVATE BANKS.</div>
+    <div class="tl-i" data-es="DESPUÉS VINIERON CASI CUATRO AÑOS EN <a class=&quot;lnk&quot; href=&quot;https://factorialhr.es&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>FACTORIAL</a>, LLEVANDO EL DISEÑO DE TARJETAS, NÓMINAS Y BENEFICIOS MIENTRAS LA EMPRESA CRUZABA LOS MIL MILLONES DE VALORACIÓN.">THEN CAME ALMOST FOUR YEARS AT <a class="lnk" href="https://factorialhr.com" target="_blank" rel="noopener">FACTORIAL</a>, LEADING DESIGN ON CARDS, PAYROLL AND BENEFITS WHILE THE COMPANY CROSSED A BILLION IN VALUATION.</div>
+    <div class="tl-i on" data-es="<b>SIETE AÑOS DISEÑANDO.</b> PERO LO QUE MÁS ME SIRVE PARA AYUDARTE NO SON ESOS SIETE. SON LOS SEIS DE ANTES."><b>SEVEN YEARS DESIGNING.</b> BUT WHAT HELPS ME MOST WITH YOU ISN'T THOSE SEVEN. IT IS THE SIX BEFORE.</div>
+  </div>
+  <div class="bridge" data-es="SÉ EXACTAMENTE LO QUE ES HACER UN TRABAJO CORRECTO EN EL QUE NO TE RECONOCES, <b>PORQUE ME PASÉ SEIS AÑOS HACIÉNDOLO.</b>">I KNOW EXACTLY WHAT IT IS LIKE TO MAKE CORRECT WORK YOU DON'T RECOGNISE YOURSELF IN, <b>BECAUSE I SPENT SIX YEARS MAKING IT.</b></div>
+</div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ══════ 4. RESERVA ══════ -->
+<section id="reserva">
+<div class="cx-wide">
+  <div class="sec-h" data-es="LA PRIMERA CONVERSACIÓN ES GRATIS Y NO TE VOY A VENDER NADA EN ELLA. SIRVE PARA VER SI ESTO TIENE SENTIDO PARA TI.">THE FIRST CONVERSATION IS FREE AND I WON'T SELL YOU ANYTHING IN IT. IT IS THERE TO SEE WHETHER ANY OF THIS MAKES SENSE FOR YOU.</div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-tag"></div>
+      <div class="card-t" data-es="HABLEMOS 15 MINUTOS">LET'S TALK FOR 15 MINUTES</div>
+      <div class="card-dur" data-es="15 MINUTOS">15 MINUTES</div>
+      <div class="card-p free" data-es="GRATIS">FREE</div>
+      <div class="card-d" data-es="NOS CONOCEMOS, ME CUENTAS EN QUÉ PUNTO ESTÁS Y VEMOS JUNTOS SI PUEDO AYUDARTE. SI CREO QUE HAY ALGUIEN MEJOR PARA AYUDARTE, TAMBIÉN TE LO DIGO.">WE MEET, YOU TELL ME WHERE YOU ARE, AND WE WORK OUT TOGETHER WHETHER I CAN HELP. IF I THINK SOMEONE ELSE IS BETTER PLACED TO HELP YOU, I'LL SAY THAT TOO.</div>
+      <a href="https://cal.com/prxy.studio/15min" class="card-b bk-open" data-slug="15min" data-name-es="HABLEMOS 15 MINUTOS" data-name-en="LET'S TALK FOR 15 MINUTES" data-es="RESERVAR">BOOK</a>
+    </div>
+
+    <div class="card lead">
+      <div class="card-tag" data-es="EMPIEZA AQUÍ">START HERE</div>
+      <div class="card-t" data-es="ENCUENTRA TU VOZ CREATIVA">FIND YOUR CREATIVE VOICE</div>
+      <div class="card-dur" data-es="90 MINUTOS">90 MINUTES</div>
+      <div class="card-p">79 &euro;</div>
+      <div class="card-d" data-es="REVISAMOS TODO TU TRABAJO, PUBLICADO Y SIN PUBLICAR. TE VAS CON UN PLAN DE ACCIÓN: QUÉ TE DISTINGUE YA, HACIA DÓNDE LLEVARLO Y QUÉ DEJAR DE HACER PARA LLEGAR.">WE GO THROUGH ALL YOUR WORK, PUBLISHED AND UNPUBLISHED. YOU LEAVE WITH AN ACTION PLAN: WHAT ALREADY SETS YOU APART, WHERE TO TAKE IT AND WHAT YOU STOP DOING TO GET THERE.</div>
+      <a href="https://cal.com/prxy.studio/encuentra-tu-voz-creativa" class="card-b bk-open" data-slug="encuentra-tu-voz-creativa" data-name-es="ENCUENTRA TU VOZ CREATIVA" data-name-en="FIND YOUR CREATIVE VOICE" data-es="RESERVAR">BOOK</a>
+    </div>
+
+    <div class="card">
+      <div class="card-tag ahorro" data-es="AHORRAS 48 &euro;">SAVE 48 &euro;</div>
+      <div class="card-t" data-es="CONSTRUYE TU VOZ CREATIVA">BUILD YOUR CREATIVE VOICE</div>
+      <div class="card-dur" data-es="3 × 90 MIN · 6 SEMANAS">3 × 90 MIN · 6 WEEKS</div>
+      <div class="card-p">189 &euro;</div>
+      <div class="card-d" data-es="LA PRIMERA SESIÓN MÁS DOS SESIONES DE SEGUIMIENTO PARA REVISAR CÓMO ESTÁS AVANZANDO Y AJUSTAR EL RUMBO SOBRE LA MARCHA.">THE FIRST SESSION PLUS TWO FOLLOW-UPS TO SEE HOW YOU ARE PROGRESSING AND ADJUST COURSE ALONG THE WAY.</div>
+      <a href="https://cal.com/prxy.studio/construye-tu-voz-creativa" class="card-b bk-open" data-slug="construye-tu-voz-creativa" data-name-es="CONSTRUYE TU VOZ CREATIVA" data-name-en="BUILD YOUR CREATIVE VOICE" data-es="RESERVAR">BOOK</a>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════ CIERRE ══════ -->
+<section id="closing">
+<div class="cx">
+  <div class="cl" data-es="TU VOZ NO HAY QUE INVENTARLA, HAY QUE APRENDER A RECONOCERLA. Y ESO SE HACE MIRANDO CON CALMA TODO LO QUE TE DEFINE.">YOUR VOICE DOESN'T NEED INVENTING, IT NEEDS RECOGNISING. AND THAT IS DONE BY LOOKING CALMLY AT EVERYTHING THAT DEFINES YOU.</div>
+  <div class="cl-s" data-es="EMPIEZA POR LA CONVERSACIÓN DE QUINCE MINUTOS. NO CUESTA NADA Y SALES SABIENDO SI ESTO ES PARA TI.">START WITH THE FIFTEEN MINUTE CONVERSATION. IT COSTS NOTHING AND YOU LEAVE KNOWING WHETHER THIS IS FOR YOU.</div>
+  <a href="https://cal.com/prxy.studio/15min" class="btn bk-open" data-slug="15min" data-name-es="HABLEMOS 15 MINUTOS" data-name-en="LET'S TALK FOR 15 MINUTES" data-es="EMPIEZA AHORA">START NOW</a>
+</div>
+</section>
+
+<div class="seal-wrap">
+<svg class="seal" viewBox="-24 -24 248 248" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="arcTR" d="M 109,-4 A 104,104 0 0,1 180,167" fill="none"/>
+<path id="arcBL" d="M 91,204 A 104,104 0 0,1 20,33" fill="none"/>
+</defs>
+<circle cx="100" cy="100" r="118" stroke="#000" stroke-width=".9" fill="none"/>
+<circle cx="100" cy="100" r="96" stroke="#000" stroke-width=".9"/>
+<ellipse cx="100" cy="100" rx="72" ry="96" stroke="#000" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="48" ry="96" stroke="#000" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="20" ry="96" stroke="#000" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="72" stroke="#000" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="48" stroke="#000" stroke-width=".7"/>
+<ellipse cx="100" cy="100" rx="96" ry="20" stroke="#000" stroke-width=".7"/>
+<line x1="4" y1="100" x2="196" y2="100" stroke="#000" stroke-width=".7"/>
+<line x1="100" y1="4" x2="100" y2="196" stroke="#000" stroke-width=".7"/>
+<rect x="93.75" y="93.75" width="12.5" height="12.5" fill="#FF4D2A" class="seal-dot"/>
+<text class="seal-text"><textPath href="#arcTR" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<text class="seal-text"><textPath href="#arcBL" startOffset="0%" text-anchor="start">PRXY.STUDIO — DESIGN YOURSELF</textPath></text>
+<path d="M -2,67 A 107,107 0 0,1 93,-7" stroke="#000" stroke-width=".7" fill="none"/>
+<path d="M 202,133 A 107,107 0 0,1 108,207" stroke="#000" stroke-width=".7" fill="none"/>
+</svg>
+</div>
+
+<div class="bk-ov" id="bkOv">
+  <div class="bk-modal" role="dialog" aria-modal="true" aria-labelledby="bkName">
+    <div class="bk-head">
+      <div class="bk-name" id="bkName"></div>
+      <button class="bk-x" id="bkX" aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="bk-body" id="bkBody">
+      <div class="bk-fall" id="bkFall" style="display:none">
+        <span data-es="SI EL CALENDARIO NO CARGA, PUEDES ABRIRLO EN UNA PESTAÑA NUEVA.">IF THE CALENDAR DOESN'T LOAD, YOU CAN OPEN IT IN A NEW TAB.</span>
+        <a class="card-b" id="bkFallLink" href="#" target="_blank" rel="noopener" style="padding:13px 34px" data-es="ABRIR CALENDARIO">OPEN CALENDAR</a>
+      </div>
+      <div class="bk-load" id="bkLoad"><i></i></div>
+    </div>
+  </div>
+</div>
+
 <div class="cart-overlay" id="cartOverlay"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="cart-header">
@@ -284,15 +604,16 @@ nav{
   <div class="cart-footer" id="cartFooter" style="display:none">
     <div class="cart-total">
       <span data-es="TOTAL">TOTAL</span>
-      <span id="cartTotal">€0</span>
+      <span id="cartTotal">&euro;0</span>
     </div>
     <a href="/shop" class="checkout-btn" data-es="IR A LA TIENDA">GO TO SHOP</a>
   </div>
 </div>
 
+<footer>PRXY<br><span id="yr"></span><a href="/shop" class="foot-shop" data-es="TIENDA">SHOP</a></footer>
+
 <script>
 (function(){
-
 
   var lang=localStorage.getItem('prxy-lang')||'en';
 
@@ -302,31 +623,120 @@ nav{
     if(es){es.classList.toggle('on',lang==='es')}
   }
 
-  function setLang(l){
+  var setLang=function(l){
     lang=l;localStorage.setItem('prxy-lang',l);
     document.querySelectorAll('[data-es]').forEach(function(el){
       if(l==='es'){if(!el.getAttribute('data-en'))el.setAttribute('data-en',el.innerHTML);el.innerHTML=el.getAttribute('data-es')}
       else{if(el.getAttribute('data-en'))el.innerHTML=el.getAttribute('data-en')}
     });
     document.documentElement.lang=l;
+    document.title=(l==='es')?'PRXY.STUDIO | ENCUENTRA TU VOZ CREATIVA':'PRXY.STUDIO | FIND YOUR CREATIVE VOICE';
     updateLangBtns();
-  }
+  };
 
   if(lang==='es')setLang('es');
   updateLangBtns();
   document.getElementById('langEN').addEventListener('click',function(e){e.preventDefault();setLang('en')});
   document.getElementById('langES').addEventListener('click',function(e){e.preventDefault();setLang('es')});
 
-  setTimeout(function(){document.getElementById('introTitle').classList.add('v')},300);
-  setTimeout(function(){document.getElementById('introBtn').classList.add('v')},1200);
-  // ── Cart badge ──
+  var yr=document.getElementById('yr');if(yr)yr.textContent=new Date().getFullYear();
+
+  // ── El hero cabe en una linea sea cual sea el idioma ──
+  function fitHero(){
+    var t=document.getElementById('introTitle');
+    if(!t)return;
+    var box=t.parentNode.getBoundingClientRect().width;
+    if(!box)return;
+    var max=(window.innerWidth<=768)?15:24, min=9;
+    t.style.fontSize=max+'px';
+    // scrollWidth > clientWidth significa que el texto se sale con nowrap
+    for(var fs=max; fs>min && t.scrollWidth>Math.ceil(box); fs--){t.style.fontSize=fs+'px'}
+  }
+  fitHero();
+  window.addEventListener('resize',fitHero,{passive:true});
+  var _origSetLang=setLang;
+  setLang=function(l){_origSetLang(l);requestAnimationFrame(fitHero)};
+
+  // ── Hero reveal escalonado ──
+  [['introKicker',200],['introTitle',400],['introSub',900],['introBtn',1300],['scrollHint',1900]].forEach(function(p){
+    setTimeout(function(){var el=document.getElementById(p[0]);if(el)el.classList.add('v')},p[1]);
+  });
+
+  // ── Section reveal ──
+  var secs=document.querySelectorAll('section');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('v');io.unobserve(en.target)}})
+    },{threshold:.1,rootMargin:'0px 0px -8% 0px'});
+    secs.forEach(function(s){io.observe(s)});
+  } else {
+    secs.forEach(function(s){s.classList.add('v')});
+  }
+
+  // ── Ocultar el hint al bajar ──
+  var hint=document.getElementById('scrollHint');
+  window.addEventListener('scroll',function(){
+    if(!hint)return;
+    hint.style.opacity=(window.scrollY>90)?'0':'';
+  },{passive:true});
+
+  // ── Modal de reserva: el visitante no sale de la web ──
+  var bkOv=document.getElementById('bkOv'), bkBody=document.getElementById('bkBody'),
+      bkName=document.getElementById('bkName'), bkLoad=document.getElementById('bkLoad'),
+      bkFall=document.getElementById('bkFall'), bkFallLink=document.getElementById('bkFallLink'),
+      bkFrame=null, bkTimer=null, bkLastFocus=null;
+
+  function bkClose(){
+    bkOv.classList.remove('open');
+    document.body.style.overflow='';
+    clearTimeout(bkTimer);
+    setTimeout(function(){
+      if(bkFrame&&bkFrame.parentNode){bkFrame.parentNode.removeChild(bkFrame);bkFrame=null}
+      bkFall.style.display='none';
+      bkLoad.classList.remove('gone');
+    },250);
+    if(bkLastFocus&&bkLastFocus.focus)bkLastFocus.focus();
+  }
+
+  function bkOpen(slug,label,url){
+    bkLastFocus=document.activeElement;
+    bkName.textContent=label||'';
+    bkFallLink.href=url;
+    bkFall.style.display='none';
+    bkLoad.classList.remove('gone');
+    if(bkFrame&&bkFrame.parentNode)bkFrame.parentNode.removeChild(bkFrame);
+    bkFrame=document.createElement('iframe');
+    bkFrame.setAttribute('title',label||'Cal.com');
+    bkFrame.setAttribute('loading','eager');
+    bkFrame.src='https://cal.com/prxy.studio/'+slug+'?embed=true&theme=light';
+    bkFrame.addEventListener('load',function(){bkLoad.classList.add('gone');clearTimeout(bkTimer)});
+    bkBody.insertBefore(bkFrame,bkLoad);
+    // Si el calendario no responde, ofrecemos salida en lugar de dejarlo colgado
+    clearTimeout(bkTimer);
+    bkTimer=setTimeout(function(){bkLoad.classList.add('gone');bkFall.style.display='flex'},6000);
+    bkOv.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  document.querySelectorAll('.bk-open').forEach(function(el){
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      var slug=el.getAttribute('data-slug');
+      var label=(lang==='es')?el.getAttribute('data-name-es'):el.getAttribute('data-name-en');
+      bkOpen(slug,label,el.getAttribute('href'));
+    });
+  });
+  document.getElementById('bkX').addEventListener('click',bkClose);
+  bkOv.addEventListener('click',function(e){if(e.target===bkOv)bkClose()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&bkOv.classList.contains('open'))bkClose()});
+
+  // ── Cart ──
   function updateCartBadge(){
     try{var c=JSON.parse(localStorage.getItem('prxy-cart')||'[]');var n=0;c.forEach(function(i){n+=(i.qty||1)});var b=document.getElementById('cartCount');if(b){b.textContent=n;b.classList.toggle('show',n>0)}}catch(e){}
   }
   updateCartBadge();
   window.addEventListener('storage',function(e){if(e.key==='prxy-cart')updateCartBadge()});
 
-  // ── Cart drawer ──
   function getCart(){try{return JSON.parse(localStorage.getItem('prxy-cart')||'[]')}catch(e){return[]}}
   function renderCartDrawer(){
     var cart=getCart();var items=document.getElementById('cartItems');var empty=document.getElementById('cartEmpty');
@@ -352,7 +762,6 @@ nav{
   var _ct=document.getElementById('cartToggle');if(_ct)_ct.addEventListener('click',function(e){e.preventDefault();openCart()});
   document.getElementById('cartOverlay').addEventListener('click',closeCart);
   document.getElementById('cartClose').addEventListener('click',closeCart);
-
 
   var ld=document.getElementById('prxyLoader');if(ld){ld.classList.add('out');setTimeout(function(){ld.style.display='none'},300)}document.body.style.opacity='1';
 })();

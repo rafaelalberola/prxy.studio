@@ -20,7 +20,7 @@ export default {
       // ── GET /products ──
       if (path === '/products' && request.method === 'GET') {
         const listRes = await pfetch(env, '/store/products');
-        if (listRes.code !== 200) return json({ error: 'Failed' }, 500, cors);
+        if (listRes.code !== 200) return json(pfError(listRes), pfStatus(listRes), cors);
 
         const products = await Promise.all(
           listRes.result.map(async (p) => {
@@ -96,7 +96,9 @@ export default {
           const qty = Math.max(1, Math.min(parseInt(quantity) || 1, 10));
 
           const det = await pfetch(env, `/store/products/${product_id}`);
-          if (det.code !== 200) return json({ error: `Product ${product_id} not found` }, 404, cors);
+          // Un token caducado no es un producto inexistente. Si los mezclamos,
+          // el 404 miente y la siguiente persona pierde una tarde buscando la ruta.
+          if (det.code !== 200) return json(pfError(det, product_id), pfStatus(det), cors);
 
           const sync = det.result.sync_product;
           const variants = det.result.sync_variants || [];
@@ -210,10 +212,30 @@ function json(data, status, headers) {
   });
 }
 
+// Printful responde { code, result, error:{ reason, message } }.
+// 401/403 = credenciales nuestras, no culpa del cliente: eso es un 502, no un 404.
+function pfStatus(res) {
+  return (res.code === 401 || res.code === 403) ? 502 : (res.code === 404 ? 404 : 502);
+}
+
+function pfError(res, productId) {
+  const msg = (res.error && res.error.message) || res.result || 'unknown';
+  if (res.code === 401 || res.code === 403) {
+    return { error: 'Printful rejected our credentials', printful_code: res.code, printful_message: msg };
+  }
+  return {
+    error: productId ? `Product ${productId} unavailable` : 'Printful request failed',
+    printful_code: res.code,
+    printful_message: msg,
+  };
+}
+
 async function pfetch(env, path) {
-  const res = await fetch(`https://api.printful.com${path}`, {
-    headers: { 'Authorization': `Bearer ${env.PRINTFUL_TOKEN}` },
-  });
+  // Un token de cuenta ve todas las tiendas del usuario, asi que Printful exige
+  // saber en cual trabajamos. Sin esta cabecera responde 400 y nada funciona.
+  const headers = { 'Authorization': `Bearer ${env.PRINTFUL_TOKEN}` };
+  if (env.PRINTFUL_STORE_ID) headers['X-PF-Store-Id'] = env.PRINTFUL_STORE_ID;
+  const res = await fetch(`https://api.printful.com${path}`, { headers });
   return res.json();
 }
 

@@ -1,3 +1,6 @@
 name = "prxy-shop"
 main = "shop-worker.js"
 compatibility_date = "2024-01-01"
+
+[vars]
+PRINTFUL_STORE_ID = "8607650"

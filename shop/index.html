@@ -145,14 +145,36 @@ a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none}
 /* NAV */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:10;
-  display:flex;flex-direction:column;
-  padding:20px 40px 0;
+  display:flex;align-items:center;
+  padding:20px 40px;
   background:rgba(251,251,251,.5);
   backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
 }
-.nav-top{display:flex;justify-content:space-between;align-items:center;width:100%}
+.nav-top{display:flex;justify-content:space-between;align-items:center;width:100%;position:relative}
+/* Absoluto y no flex: asi el centro es el centro del header, no el hueco
+   que dejen el logo y los controles, que miden distinto en cada idioma. */
+.nav-mid{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:24px;align-items:center}
 .nav-acts{display:flex;gap:16px;align-items:center}
-.nav-links{display:flex;gap:20px;align-items:center;justify-content:center;padding:16px 0 16px}
+/* Enlace de nav y burger: mismo tamaño que el resto del header */
+.nav-r{font-size:15px;letter-spacing:0;line-height:24px;color:#8e8e8e;transition:color .2s}
+.nav-r:hover{color:#111}
+.nav-r.on{color:#111}
+.burger{display:none;width:15px;height:11px;position:relative;background:none;border:0;padding:0;cursor:pointer}
+.burger span{position:absolute;left:0;width:15px;height:1px;background:#111;transition:transform .28s ease,opacity .18s ease}
+.burger span:nth-child(1){top:0}
+.burger span:nth-child(2){top:5px}
+.burger span:nth-child(3){top:10px}
+.burger.open span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+.menu-ov{
+  position:fixed;inset:0;z-index:9;background:#fbfbfb;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;
+  opacity:0;pointer-events:none;transition:opacity .28s ease;
+}
+.menu-ov.open{opacity:1;pointer-events:auto}
+.menu-ov a{font-size:15px;letter-spacing:0;color:#8e8e8e;transition:color .2s}
+.menu-ov a:hover,.menu-ov a.on{color:#111}
 .logo{letter-spacing:0;font-size:15px;line-height:24px;display:flex;align-items:center}
 .cursor{
   display:block;
@@ -162,9 +184,6 @@ nav{
   flex-shrink:0;
   animation:morph 4s ease-in-out infinite;
 }
-.nav-r{font-size:15px;letter-spacing:0;color:#8e8e8e;transition:color .2s}
-.nav-r:hover{color:#111}
-.nav-r.active{color:#111}
 .nav-cart{position:relative;display:flex;align-items:center;height:24px;transition:opacity .2s}
 .nav-cart svg{display:block;opacity:.35;transition:opacity .2s}
 .nav-cart:hover svg{opacity:1}
@@ -368,7 +387,9 @@ footer{text-align:center;padding:60px 40px;font-size:15px;letter-spacing:0;color
 .toast-close:hover{opacity:1}
 
 @media(max-width:768px){
-  nav{padding:20px 20px 0}
+  nav{padding:20px}
+  .nav-mid{display:none}
+  .burger{display:block}
   .gallery{padding:80px 20px 80px;gap:30px;grid-template-columns:1fr 1fr}
   .p-back{grid-column:1;text-align:center;width:auto}
   .carousel{grid-column:1;grid-row:auto}
@@ -388,6 +409,10 @@ footer{text-align:center;padding:60px 40px;font-size:15px;letter-spacing:0;color
 <nav>
   <div class="nav-top">
     <a href="/" class="logo">PRXY<span class="cursor"></span></a>
+    <div class="nav-mid">
+      <a href="/" class="nav-r" data-es="INICIO">HOME</a>
+      <a href="/shop" class="nav-r on" data-es="TIENDA">SHOP</a>
+    </div>
     <div class="nav-acts">
       <a href="#" class="nav-cart" id="cartToggle">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -397,13 +422,15 @@ footer{text-align:center;padding:60px 40px;font-size:15px;letter-spacing:0;color
         <a href="#" class="lang-btn" id="langEN">EN</a>
         <a href="#" class="lang-btn" id="langES">ES</a>
       </div>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menuOv"><span></span><span></span><span></span></button>
     </div>
   </div>
-  <div class="nav-links">
-    <a href="/" class="nav-r" data-es="INICIO">HOME</a>
-    <a href="/shop" class="nav-r active" data-es="TIENDA">SHOP</a>
-  </div>
 </nav>
+
+<div class="menu-ov" id="menuOv">
+  <a href="/" data-es="INICIO">HOME</a>
+  <a href="/shop" class="on" data-es="TIENDA">SHOP</a>
+</div>
 
 <div class="serial">SHOP-001 / REV.A</div>
 
@@ -468,6 +495,26 @@ footer{text-align:center;padding:60px 40px;font-size:15px;letter-spacing:0;color
 <script>
 (function(){
 
+
+  // -- Burger: en movil el menu vive detras de tres lineas --
+  var burger=document.getElementById('burger'), menuOv=document.getElementById('menuOv');
+  function menuClose(){
+    if(!burger)return;
+    burger.classList.remove('open');burger.setAttribute('aria-expanded','false');
+    menuOv.classList.remove('open');document.body.style.overflow='';
+  }
+  if(burger){
+    burger.addEventListener('click',function(){
+      var open=!burger.classList.contains('open');
+      burger.classList.toggle('open',open);
+      burger.setAttribute('aria-expanded',open?'true':'false');
+      menuOv.classList.toggle('open',open);
+      document.body.style.overflow=open?'hidden':'';
+    });
+    menuOv.querySelectorAll('a').forEach(function(a){a.addEventListener('click',menuClose)});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')menuClose()});
+    window.addEventListener('resize',function(){if(window.innerWidth>768)menuClose()},{passive:true});
+  }
 
   document.getElementById('yr').textContent=new Date().getFullYear();
 

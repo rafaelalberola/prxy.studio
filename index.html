@@ -178,7 +178,10 @@ nav{
   background:rgba(251,251,251,.72);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
-.nav-top{display:flex;justify-content:space-between;align-items:center;width:100%}
+.nav-top{display:flex;justify-content:space-between;align-items:center;width:100%;position:relative}
+/* Absoluto y no flex: asi el centro es el centro del header, no el hueco
+   que dejen el logo y los controles, que miden distinto en cada idioma. */
+.nav-mid{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:24px;align-items:center}
 .nav-acts{display:flex;gap:24px;align-items:center;height:24px}
 .logo{color:#000;letter-spacing:0;font-size:15px;display:flex;align-items:center}
 .cursor{display:block;width:10px;height:10px;background:#FF4D2A;margin-left:6px;flex-shrink:0;animation:morph 4s ease-in-out infinite}
@@ -186,6 +189,26 @@ nav{
 .lang-btn{font-size:15px;letter-spacing:0;line-height:24px;color:#838383;cursor:pointer;transition:color .2s}
 .lang-btn:hover{color:#000}
 .lang-btn.on{color:#000}
+.nav-r{font-size:15px;letter-spacing:0;line-height:24px;color:#838383;transition:color .2s}
+.nav-r:hover{color:#000}
+.nav-r.on{color:#000}
+/* Burger: solo movil. Tres lineas que se cruzan al abrir. */
+.burger{display:none;width:15px;height:11px;position:relative;background:none;border:0;padding:0;cursor:pointer}
+.burger span{position:absolute;left:0;width:15px;height:1px;background:#000;transition:transform .28s ease,opacity .18s ease}
+.burger span:nth-child(1){top:0}
+.burger span:nth-child(2){top:5px}
+.burger span:nth-child(3){top:10px}
+.burger.open span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+.menu-ov{
+  position:fixed;inset:0;z-index:9;background:#fbfbfb;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;
+  opacity:0;pointer-events:none;transition:opacity .28s ease;
+}
+.menu-ov.open{opacity:1;pointer-events:auto}
+.menu-ov a{font-size:15px;letter-spacing:0;color:#838383;transition:color .2s}
+.menu-ov a:hover{color:#000}
 
 /* ── HERO ── */
 #intro{
@@ -304,7 +327,7 @@ section.v{opacity:1;transform:none}
 .card-p{font-size:19px;color:#000;letter-spacing:-.02em;margin-bottom:22px}
 .card-p.free{color:#000}
 .card-tag.ahorro{color:#838383}
-.card-d{font-size:13px;line-height:1.6;letter-spacing:0;color:#838383;margin-bottom:30px;flex:1}
+.card-d{font-size:14px;line-height:1.6;letter-spacing:0;color:#838383;margin-bottom:30px;flex:1}
 .card-b{
   display:block;text-align:center;
   border:1px solid rgba(0,0,0,.15);
@@ -331,8 +354,6 @@ section.v{opacity:1;transform:none}
 .seal-dot{transform-origin:100px 100px;animation:sealMorph 4s ease-in-out infinite}
 
 footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;color:#838383;text-transform:uppercase}
-.foot-shop{display:block;margin-top:22px;font-size:11px;letter-spacing:.2em;color:#838383;transition:color .2s}
-.foot-shop:hover{color:#000}
 
 /* ── MOBILE ── */
 @media(max-width:900px){
@@ -340,6 +361,8 @@ footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;
 }
 @media(max-width:768px){
   nav{padding:20px}
+  .nav-mid{display:none}
+  .burger{display:block}
   #intro{padding:130px 24px 130px;min-height:88vh}
   .scroll-hint{bottom:44px}
   .intro-title{font-size:15px;white-space:nowrap;max-width:none}
@@ -436,14 +459,24 @@ footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;
 <nav>
   <div class="nav-top">
     <a href="/" class="logo">PRXY<span class="cursor"></span></a>
+    <div class="nav-mid">
+      <a href="/" class="nav-r on" data-es="INICIO">HOME</a>
+      <a href="/shop" class="nav-r" data-es="TIENDA">SHOP</a>
+    </div>
     <div class="nav-acts">
       <div class="nav-lang-wrap">
         <a href="#" class="lang-btn" id="langEN">EN</a>
         <a href="#" class="lang-btn" id="langES">ES</a>
       </div>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menuOv"><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
+
+<div class="menu-ov" id="menuOv">
+  <a href="/" data-es="INICIO">HOME</a>
+  <a href="/shop" data-es="TIENDA">SHOP</a>
+</div>
 
 
 <!-- ══════ HERO ══════ -->
@@ -500,13 +533,13 @@ footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;
   <div class="tl">
     <div class="tl-i" data-es="<b>ESTUDIÉ FILOLOGÍA INGLESA.</b> PORQUE TODO EL MUNDO A MI ALREDEDOR REPETÍA QUE EL INGLÉS ERA IMPORTANTE. DESPUÉS UN MÁSTER EN TURISMO, POR LA MISMA RAZÓN: PARECÍA LO SENSATO."><b>I STUDIED ENGLISH PHILOLOGY.</b> BECAUSE EVERYONE AROUND ME KEPT SAYING ENGLISH MATTERED. THEN A MASTER'S IN TOURISM, FOR THE SAME REASON: IT SEEMED SENSIBLE.</div>
     <div class="tl-i" data-es="<b>SEIS AÑOS DESPUÉS.</b> CUMPLIENDO EXPECTATIVAS QUE NO ERAN MÍAS, SIN HABER TOMADO YO NINGUNA DE LAS DECISIONES IMPORTANTES."><b>SIX YEARS LATER.</b> MEETING EXPECTATIONS THAT WEREN'T MINE, WITHOUT HAVING MADE A SINGLE IMPORTANT DECISION MYSELF.</div>
-    <div class="tl-i" data-es="<b>EMPECÉ DE CERO.</b> LOS PRIMEROS AÑOS FUERON AGENCIAS, SUELDOS MALOS Y JEFES QUE MATABAN CUALQUIER IDEA ANTES DE QUE LLEGARA A NACER."><b>I STARTED FROM SCRATCH.</b> THE FIRST YEARS WERE AGENCIES, BAD PAY AND BOSSES WHO KILLED ANY IDEA BEFORE IT WAS BORN.</div>
+    <div class="tl-i" data-es="<b>EMPECÉ DE CERO, HACIENDO LO QUE DE VERDAD ME APASIONABA: DISEÑAR</b>. LOS PRIMEROS AÑOS FUERON AGENCIAS, SUELDOS MALOS Y JEFES QUE MATABAN CUALQUIER IDEA ANTES DE QUE LLEGARA A NACER."><b>I STARTED FROM SCRATCH, DOING WHAT I ACTUALLY LOVED: DESIGN</b>. THE FIRST YEARS WERE AGENCIES, BAD PAY AND BOSSES WHO KILLED ANY IDEA BEFORE IT WAS BORN.</div>
     <div class="tl-i" data-es="<b>DEJÉ DE PEDIR PERMISO.</b> REDISEÑÉ APLICACIONES QUE NADIE ME HABÍA ENCARGADO Y ESTUDIÉ EL OFICIO ENTERO, DISCIPLINA POR DISCIPLINA, HASTA TENER ALGO QUE DEFENDER. ENTONCES SE LAS MANDÉ A LAS EMPRESAS QUE ME INTERESABAN."><b>I STOPPED ASKING PERMISSION.</b> I REDESIGNED APPS NOBODY ASKED ME FOR AND STUDIED THE WHOLE CRAFT, DISCIPLINE BY DISCIPLINE, UNTIL I HAD SOMETHING WORTH DEFENDING. THEN I SENT THEM TO THE COMPANIES I WANTED.</div>
     <div class="tl-i" data-es="ASÍ ENTRÉ EN <a class=&quot;lnk&quot; href=&quot;https://allfunds.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>ALLFUNDS</a>, JUSTO EL AÑO QUE SALIERON A BOLSA, DISEÑANDO HERRAMIENTAS PARA SIETE BANCOS PRIVADOS.">THAT IS HOW I GOT INTO <a class="lnk" href="https://allfunds.com" target="_blank" rel="noopener">ALLFUNDS</a>, THE VERY YEAR THEY WENT PUBLIC, DESIGNING TOOLS FOR SEVEN PRIVATE BANKS.</div>
     <div class="tl-i" data-es="DESPUÉS VINIERON CASI CUATRO AÑOS EN <a class=&quot;lnk&quot; href=&quot;https://factorialhr.es&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>FACTORIAL</a>, LLEVANDO EL DISEÑO DE TARJETAS, NÓMINAS Y BENEFICIOS MIENTRAS LA EMPRESA CRUZABA LOS MIL MILLONES DE VALORACIÓN.">THEN CAME ALMOST FOUR YEARS AT <a class="lnk" href="https://factorialhr.com" target="_blank" rel="noopener">FACTORIAL</a>, LEADING DESIGN ON CARDS, PAYROLL AND BENEFITS WHILE THE COMPANY CROSSED A BILLION IN VALUATION.</div>
     <div class="tl-i on" data-es="<b>SIETE AÑOS DISEÑANDO.</b> PERO LO QUE MÁS ME SIRVE PARA AYUDARTE NO SON ESOS SIETE. SON LOS SEIS DE ANTES."><b>SEVEN YEARS DESIGNING.</b> BUT WHAT HELPS ME MOST WITH YOU ISN'T THOSE SEVEN. IT IS THE SIX BEFORE.</div>
   </div>
-  <div class="bridge" data-es="SÉ EXACTAMENTE LO QUE ES HACER UN TRABAJO CORRECTO EN EL QUE NO TE RECONOCES, <b>PORQUE ME PASÉ SEIS AÑOS HACIÉNDOLO.</b>">I KNOW EXACTLY WHAT IT IS LIKE TO MAKE CORRECT WORK YOU DON'T RECOGNISE YOURSELF IN, <b>BECAUSE I SPENT SIX YEARS MAKING IT.</b></div>
+  <div class="bridge" data-es="SÉ EXACTAMENTE LO QUE ES HACER ALGO EN LO QUE NO TE RECONOCES, <b>PORQUE ME PASÉ SEIS AÑOS HACIÉNDOLO.</b>">I KNOW EXACTLY WHAT IT IS LIKE TO MAKE SOMETHING YOU DON'T RECOGNISE YOURSELF IN, <b>BECAUSE I SPENT SIX YEARS MAKING IT.</b></div>
 </div>
 </section>
 
@@ -616,7 +649,7 @@ footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;
   </div>
 </div>
 
-<footer>PRXY<br><span id="yr"></span><a href="/shop" class="foot-shop" data-es="TIENDA">SHOP</a></footer>
+<footer>PRXY<br><span id="yr"></span></footer>
 
 <script>
 (function(){
@@ -644,6 +677,26 @@ footer{text-align:center;padding:50px 40px 60px;font-size:15px;letter-spacing:0;
   updateLangBtns();
   document.getElementById('langEN').addEventListener('click',function(e){e.preventDefault();setLang('en')});
   document.getElementById('langES').addEventListener('click',function(e){e.preventDefault();setLang('es')});
+
+  // -- Burger: en movil el menu vive detras de tres lineas --
+  var burger=document.getElementById('burger'), menuOv=document.getElementById('menuOv');
+  function menuClose(){
+    if(!burger)return;
+    burger.classList.remove('open');burger.setAttribute('aria-expanded','false');
+    menuOv.classList.remove('open');document.body.style.overflow='';
+  }
+  if(burger){
+    burger.addEventListener('click',function(){
+      var open=!burger.classList.contains('open');
+      burger.classList.toggle('open',open);
+      burger.setAttribute('aria-expanded',open?'true':'false');
+      menuOv.classList.toggle('open',open);
+      document.body.style.overflow=open?'hidden':'';
+    });
+    menuOv.querySelectorAll('a').forEach(function(a){a.addEventListener('click',menuClose)});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')menuClose()});
+    window.addEventListener('resize',function(){if(window.innerWidth>768)menuClose()},{passive:true});
+  }
 
   var yr=document.getElementById('yr');if(yr)yr.textContent=new Date().getFullYear();
 
